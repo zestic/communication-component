@@ -1,0 +1,44 @@
+{
+  "name": "zestic/communication-component",
+  "type": "library",
+  "description": "Communication component for Laminas using Symfony Messenger and Notifier",
+  "keywords": [],
+  "license": "MIT",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "^8.0",
+    "iampersistent/config-value-component": "^1.2",
+    "laminas/laminas-servicemanager": "^3.6",
+    "mezzio/mezzio-twigrenderer": "^2.6",
+    "netglue/laminas-messenger": "^1.0.3",
+    "psr/container": "^1.0",
+    "symfony/dependency-injection": "^5.4",
+    "symfony/event-dispatcher": "^5.4",
+    "symfony/messenger": "^5.4",
+    "symfony/mailer": "^5.4",
+    "symfony/notifier": "^5.4",
+    "symfony/property-access": "^5.4",
+    "symfony/serializer": "^5.4",
+    "symfony/twig-bridge": "^5.4",
+    "twig/inky-extra": "^3.1",
+    "twig/twig": "^3.0"
+  },
+  "require-dev": {
+    "symfony/amazon-mailer": "^5.4"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Communication\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Fixture\\": "tests/_support/Fixture",
+      "Tests\\Functional\\": "tests/functional",
+      "Tests\\Unit\\": "tests/unit"
+    }
+  }
+}
