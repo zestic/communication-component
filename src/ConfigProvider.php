@@ -20,7 +20,7 @@ use Communication\Factory\NotifierFactory;
 use Communication\Factory\Transport\CommunicationTransportFactory;
 use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\MessageHandlerFactory;
-use Communication\Factory\NotificationFactory;
+use Communication\Factory\CommunicationFactory;
 use Communication\Locator\EmailBusLocator;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Mailer\Messenger\SendEmailMessage;
@@ -35,7 +35,7 @@ class ConfigProvider
         return [
             'dependencies'  => $this->getDependencies(),
             'laminas-cli'   => $this->getConsoleConfig(),
-            'communication'  => $this->getCommunicationConfig(),
+            'communication' => $this->getCommunicationConfig(),
             'symfony'       => [
                 'messenger' => $this->getMessengerConfig(),
             ],
@@ -55,7 +55,7 @@ class ConfigProvider
     {
         return [
             'abstract_factories' => [
-                NotificationFactory::class,
+                CommunicationFactory::class,
             ],
             'factories'          => [
                 'messenger.bus.email'                      => new MessageBusStaticFactory(
@@ -71,9 +71,11 @@ class ConfigProvider
                     'messenger.bus.email'
                 ),
                 'messenger.transport.email'                => [TransportFactory::class, 'messenger.transport.email'],
-                'messenger.handler.email'                  => new MessageHandlerFactory('communication.transport.email'),
-                'communication.channel.email'               => new EmailChannelFactory('communication.channel.email'),
-                'communication.transport.email'             => new CommunicationTransportFactory(
+                'messenger.handler.email'                  => new MessageHandlerFactory(
+                    'communication.transport.email'
+                ),
+                'communication.channel.email'              => new EmailChannelFactory('communication.channel.email'),
+                'communication.transport.email'            => new CommunicationTransportFactory(
                     'communication.transport.email'
                 ),
                 EmailBusLocator::class                     =>
@@ -138,14 +140,12 @@ class ConfigProvider
         return [
             'channel' => [
                 'email' => [
-                    'channel'               => 'communication.channel.email',
-                    'communication_factory' => EmailNotificationFactory::class,
-                    'message_bus'           => 'messenger.bus.email',
-                    'messenger'             => 'messenger.transport.email',
-                    'transport'             => 'communication.transport.email',
+                    'channel' => 'communication.channel.email',
+                    'factory'   => EmailNotificationFactory::class,
+                    'transport' => 'communication.transport.email',
                 ],
             ],
-            'context'  => [
+            'context' => [
                 'email' => [
                     'factory' => EmailContextFactory::class,
                     'data'    => [

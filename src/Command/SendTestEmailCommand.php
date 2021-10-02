@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Communication\Command;
 
-use Communication\Notification\GenericCommunication;
+use Communication\Communication\GenericCommunication;
 use Communication\Recipient;
 use Communication\RecipientChannels;
 use Symfony\Component\Console\Command\Command;

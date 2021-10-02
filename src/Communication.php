@@ -11,18 +11,15 @@ use Symfony\Component\Notifier\NotifierInterface;
 
 abstract class Communication
 {
-    /** @var \Notification\Context\NotificationContext */
-    protected $context;
-    /** @var \Notification\RecipientChannels[] */
+    /** @var \Communication\RecipientChannels[] */
     private array $recipientChannels = [];
 
     public function __construct(
+        protected CommunicationContext $context,
         private NotifierInterface $notifier,
-        CommunicationContext $context,
         private array $channels,
         private array $notificationFactories,
     ) {
-        $this->context = $context;
     }
 
     public function getContext(): CommunicationContext
