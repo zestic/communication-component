@@ -4,22 +4,23 @@ declare(strict_types=1);
 namespace Communication;
 
 use Communication\Context\CommunicationContext;
-use Communication\Factory\Communication\NotificationFactoryInterface;
-use Symfony\Component\Notifier\Notifier;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 
 abstract class Communication
 {
-    /** @var \Communication\RecipientChannels[] */
-    private array $recipientChannels = [];
+    /** @var \Communication\Recipient[] */
+    private array $channelRecipients = [];
 
     public function __construct(
         protected CommunicationContext $context,
-        private NotifierInterface $notifier,
-        private array $channels,
         private array $notificationFactories,
+        private NotifierInterface $notifier,
     ) {
+        foreach ($this->getAllowedChannels() as $channel) {
+            $this->channelRecipients[$channel] = [];
+        }
     }
 
     public function getContext(): CommunicationContext
@@ -27,57 +28,65 @@ abstract class Communication
         return $this->context;
     }
 
-    public function addRecipientChannel(RecipientChannels $recipientChannels): self
+    public function addRecipient($recipients): self
     {
-        $this->recipientChannels[] = $recipientChannels;
-
-        return $this;
-    }
-
-    public function setRecipientChannels(array $recipientChannels): self
-    {
-        $this->recipientChannels = $recipientChannels;
+        if (!is_array($recipients)) {
+            $recipients = [$recipients];
+        }
+        $this->context->setRecipients($recipients);
+        foreach ($recipients as $recipient) {
+            $this->addRecipientToChannels($recipient);
+        }
 
         return $this;
     }
 
     public function send()
     {
-        $channels = $this->getChannels();
-
-        foreach ($channels as $channel => $recipients) {
-            if (!empty($channels[$channel])) {
-                $communication = $this->createCommunication($channel);
+        $this->setTemplates();
+        foreach ($this->channelRecipients as $channel => $recipients) {
+            if (!empty($recipients)) {
                 foreach ($recipients as $recipient) {
+                    $communication = $this->createNotification($channel);
                     $this->notifier->send($communication, $recipient);
                 }
             }
         }
     }
 
-    protected function getAllowedNotifications(): array
+    public function setFrom(Recipient|Address|string $address)
     {
-        return $this->channels;
+        $this->context->setFrom($address);
     }
 
-    private function createCommunication($channel): Communication
-    {
-        $factory = $this->notificationFactories[$channel];
+    abstract protected function getAllowedChannels(): array;
+    abstract protected function getTemplates(): array;
 
-        return $factory->create($this->context, $channel);
-    }
-
-    private function getChannels(): array
+    private function addRecipientToChannels(Recipient $recipient)
     {
-        $channels = [];
-        foreach ($this->getAllowedNotifications() as $channel) {
-            $channels[$channel] = [];
-            foreach ($this->recipientChannels as $recipientChannel) {
-                $channels[$channel] =
-                    array_merge($channels[$channel], $recipientChannel->getForChannel($channel));
+        foreach ($recipient->getChannels() as $channel) {
+            if (isset($this->channelRecipients[$channel])) {
+                $this->channelRecipients[$channel][] = $recipient;
             }
         }
+    }
 
-        return $channels;
+    private function createNotification($channel): Notification
+    {
+        $factory = $this->notificationFactories[$channel];
+        $context = $this->context->getContext($channel);
+
+        return $factory->create($context, $channel);
+    }
+
+    private function setTemplates()
+    {
+        foreach ($this->getTemplates() as $channel => $templates) {
+            $context = $this->context->getContext($channel);
+            foreach ($templates as $type => $template) {
+                $setter = 'set' . ucfirst(strtolower($type)) . 'Template';
+                $context->$setter($template);
+            }
+        }
     }
 }

@@ -19,18 +19,11 @@ class CommunicationFactory implements AbstractFactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config')['communication'];
-
-        // Symfony Notifier gets all of the channels
-        // the channels are passed in preconfigured with the info from the routes
-
-        $routes = $this->getRoutes($config);
-        $channels = $this->getChannels($requestedName, $config);
         $communicationFactories = $this->getCommunicationFactories($container, $config['channel']);
-//        $context = $this->buildContext();
         $context = $this->getContext($container, $config['context']);
         $notifier = $container->get(NotifierInterface::class);
 
-        return new $requestedName($notifier, $context, $channels, $communicationFactories);
+        return new $requestedName($context, $communicationFactories, $notifier);
     }
 
     protected function getChannels(string $requestedName, array $config): array
@@ -59,13 +52,13 @@ class CommunicationFactory implements AbstractFactoryInterface
 
     protected function getContext(ContainerInterface $container, array $config): CommunicationContext
     {
-        $meta = [];
+        $contexts = [];
         foreach ($config as $channel => $context) {
             $factory = $context['factory'];
-            $meta[$channel] = (new $factory())->create($container, $context['data']);
+            $contexts[$channel] = (new $factory())->create($container, $context['data']);
         }
 
-        return new CommunicationContext([], $meta);
+        return new CommunicationContext($contexts);
     }
 
     protected function getRoutes(array $config): array

@@ -22,7 +22,7 @@ final class SmtpFactory
     {
         $config = (new GatherConfigValues)($container, $this->id);
         $dispatcher = $container->get(EventDispatcherInterface::class);
-        $logger = null;
+        $logger = $config['logger'] ?? null;
 
         $transport = new EsmtpTransport($config['uri'], (int) $config['port'], false, $dispatcher, $logger);
         $transport

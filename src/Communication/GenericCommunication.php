@@ -1,28 +1,38 @@
 <?php
 declare(strict_types=1);
 
-namespace Communication\Notification;
+namespace Communication\Communication;
 
 use Communication\Communication;
 use Symfony\Component\Mime\Address;
 
 final class GenericCommunication extends Communication
 {
-    public function dispatch(string $subject, string $body, ?Address $from)
+    public function dispatch(string $subject, string $body)
     {
-        $this->context->set('body', $body);
-        /** @var \Communication\Context\EmailContext $emailContext */
-        $emailContext = $this->context->getMeta('email');
-        $emailContext
-            ->setHtmlTemplate('generic')
+        $bodyContext = [
+            'body' => $body,
+        ];
+        $this->context
+            ->setBodyContext($bodyContext)
             ->setSubject($subject);
+
         $this->send();
     }
 
-    protected function getAllowedNotifications(): array
+    protected function getAllowedChannels(): array
     {
         return [
             'email',
+        ];
+    }
+
+    protected function getTemplates(): array
+    {
+        return [
+            'email' => [
+                'html' => 'generic'
+            ],
         ];
     }
 }

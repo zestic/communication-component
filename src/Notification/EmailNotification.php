@@ -5,7 +5,6 @@ namespace Communication\Notification;
 
 use Communication\Context\EmailContext;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Notification\EmailNotificationInterface;
 use Symfony\Component\Notifier\Notification\Notification;
@@ -13,12 +12,11 @@ use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 
 final class EmailNotification extends Notification implements EmailNotificationInterface
 {
-    /** @var \Symfony\Bridge\Twig\Mime\TemplatedEmail */
-    private $email;
+    private TemplatedEmail $email;
 
     public function __construct(EmailContext $emailContext, array $channels = [])
     {
-        $this->createEmailMessage($emailContext);
+        $this->email = $this->createEmailMessage($emailContext);
 
         parent::__construct($emailContext->getSubject(), $channels);
     }
@@ -37,8 +35,7 @@ final class EmailNotification extends Notification implements EmailNotificationI
     {
         $email = (new TemplatedEmail())
             ->context($emailContext->getBodyContext())
-            ->subject($emailContext->getSubject())
-        ;
+            ->subject($emailContext->getSubject());
         if ($template = $emailContext->getHtmlTemplate()) {
             $email->htmlTemplate("$template.html.twig");
         }
@@ -46,22 +43,15 @@ final class EmailNotification extends Notification implements EmailNotificationI
             $email->textTemplate("$template.text.twig");
         }
         foreach ($emailContext->getBcc() as $bcc) {
-            $address = Address::create($bcc->getEmail());
-            $email->addBcc($address);
-        }
-        foreach ($emailContext->getFrom() as $from) {
-            $address = Address::create($from->getEmail());
-            $email->addFrom($address);
+            $email->addBcc($bcc);
         }
         foreach ($emailContext->getReplyTo() as $replyTo) {
-            $address = Address::create($replyTo->getEmail());
-            $email->addReplyTo($address);
+            $email->addReplyTo($replyTo);
         }
-        foreach ($emailContext->getTo() as $to) {
-            $address = Address::create($to->getEmail());
-            $email->addTo($address);
+        if ($from = $emailContext->getFrom()) {
+            $email->addFrom($from);
         }
 
-        $this->email = $email;
+        return $email;
     }
 }

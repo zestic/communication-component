@@ -5,38 +5,49 @@ namespace Communication\Context;
 
 final class CommunicationContext
 {
+    /**
+     * @var object[] $channelContexts
+     */
     public function __construct(
-        private array $data = [],
-        private array $meta = [],
+        private array $channelContexts = [],
     )  {
     }
 
-    public function get(string $key)
+    public function __call(string $method, $args): CommunicationContext
     {
-        return $this->data[$key] ?? null;
-    }
+        if (!str_starts_with($method, 'set')) {
+            throw new \BadMethodCallException();
+        }
 
-    public function getMeta(string $key)
-    {
-        return $this->meta[$key] ?? null;
-    }
-
-    public function set(string $key, $value): self
-    {
-        $this->data[$key] = $value;
+        foreach ($this->channelContexts as $context) {
+            if (method_exists($context, $method)) {
+                $context->$method(...$args);
+            }
+        }
 
         return $this;
     }
 
-    public function setMeta(string $key, $meta): self
+    public function getContext(string $name)
     {
-        $this->meta[$key] = $meta;
+        return $this->channelContexts[$name];
+    }
+
+    public function setFrom($from): CommunicationContext
+    {
+        foreach ($this->channelContexts as $context) {
+            $context->setFrom($from);
+        }
 
         return $this;
     }
 
-    public function toArray(): array
+    public function setRecipients(array $recipients): CommunicationContext
     {
-        return $this->data;
+        foreach ($this->channelContexts as $context) {
+            $context->setRecipients($recipients);
+        }
+
+        return $this;
     }
 }

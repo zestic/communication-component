@@ -140,7 +140,6 @@ class ConfigProvider
         return [
             'channel' => [
                 'email' => [
-                    'channel' => 'communication.channel.email',
                     'factory'   => EmailNotificationFactory::class,
                     'transport' => 'communication.transport.email',
                 ],

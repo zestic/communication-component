@@ -11,25 +11,10 @@ final class EmailContextFactory implements ContextFactoryInterface
 {
     public function create(ContainerInterface $container, array $data): EmailContext
     {
-        $cc = $this->createRecipients($data['cc'] ?? []);
-        $bcc = $this->createRecipients($data['bcc'] ?? []);
-        $from = $this->createRecipients($data['from'] ?? []);
-        $replyTo = $this->createRecipients($data['reply_to'] ?? []);
-
         return (new EmailContext())
-            ->setCc($cc)
-            ->setBcc($bcc)
-            ->setFrom($from)
-            ->setReplyTo($replyTo);
-    }
-
-    private function createRecipients(array $config): array
-    {
-        $recipients = [];
-        foreach ($config as $email) {
-            $recipients[] = (new Recipient())->setEmail($email);
-        }
-
-        return $recipients;
+            ->setCc($data['cc'] ?? [])
+            ->setBcc($data['bcc'] ?? [])
+            ->setFrom($data['from'] ?? null)
+            ->setReplyTo($data['reply_to'] ?? []);
     }
 }

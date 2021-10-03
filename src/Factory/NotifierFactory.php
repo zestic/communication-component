@@ -12,11 +12,9 @@ final class NotifierFactory
     public function __invoke(ContainerInterface $container): NotifierInterface
     {
         $channels = [];
-        $channelList = $container->get('config')['notification']['channel'];
-        // routes for channels has to be handled here
-
+        $channelList = $container->get('config')['communication']['channel'];
         foreach ($channelList as $channel => $config) {
-            $channels[$channel] = $container->get($config['channel']);
+            $channels[$channel] = $container->get($config['channel'] ?? "communication.channel.{$channel}");
         }
 
         return new Notifier($channels);

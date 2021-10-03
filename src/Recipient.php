@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Communication;
 
-use Symfony\Component\Notifier\Exception\InvalidArgumentException;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Notifier\Recipient\EmailRecipientTrait;
 use Symfony\Component\Notifier\Recipient\SmsRecipientInterface;
@@ -16,9 +16,7 @@ final class Recipient implements EmailRecipientInterface, SmsRecipientInterface
 
     /** @var string[] */
     private array $channels;
-    private string $email;
-    private string $name;
-    private string $phone;
+    private string $name = '';
 
     public function __construct(
         array $channels = [],
@@ -36,6 +34,11 @@ final class Recipient implements EmailRecipientInterface, SmsRecipientInterface
         $this->channels[] = 'email';
 
         return $this;
+    }
+
+    public function getEmailAddress(): Address
+    {
+        return new Address($this->email, $this->name);
     }
 
     public function getName(): string

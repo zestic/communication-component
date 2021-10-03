@@ -8,5 +8,5 @@ use Symfony\Component\Notifier\Channel\ChannelInterface;
 
 interface ChannelFactoryInterface
 {
-    public function __invoke(ContainerInterface $container, array $config): ChannelInterface;
+    public function __invoke(ContainerInterface $container): ChannelInterface;
 }

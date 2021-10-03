@@ -5,7 +5,6 @@ namespace Communication\Command;
 
 use Communication\Communication\GenericCommunication;
 use Communication\Recipient;
-use Communication\RecipientChannels;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,7 +17,7 @@ final class SendTestEmailCommand extends Command
     protected static $defaultName = 'communication:send-test-email';
 
     public function __construct(
-        private GenericCommunication $notification,
+        private GenericCommunication $communication,
     )  {
         parent::__construct();
     }
@@ -43,16 +42,14 @@ final class SendTestEmailCommand extends Command
     {
         $email = $input->getArgument('email');
         if ($from = $input->getOption('from')) {
-            $from = new Address($from);
+            $this->communication->setFrom($from);
         }
 
         $recipient = (new Recipient())
             ->setEmail($email);
-        $recipientChannels = (new RecipientChannels())
-            ->addRecipientsToChannel('email', $recipient);
 
-        $this->notification
-            ->setRecipientChannels([$recipientChannels])
+        $this->communication
+            ->addRecipient($recipient)
             ->dispatch('Test Email', 'This is a test', $from);
 
         return Command::SUCCESS;

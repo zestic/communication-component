@@ -3,26 +3,25 @@ declare(strict_types=1);
 
 namespace Communication\Context;
 
-final class EmailContext
+use Communication\Recipient;
+use Symfony\Component\Mime\Address;
+
+final class EmailContext implements CommunicationContextInterface
 {
-    /** @var \Notification\Recipient[] */
-    private $bcc = [];
-    /** @var array */
-    private $bodyContext;
-    /** @var \Notification\Recipient[] */
-    private $cc = [];
-    /** @var \Notification\Recipient[] */
-    private $from = [];
-    /** @var string */
-    private $htmlTemplate;
-    /** @var \Notification\Recipient[] */
-    private $replyTo = [];
-    /** @var string */
-    private $subject = '';
-    /** @var string */
-    private $textTemplate;
-    /** @var \Notification\Recipient[] */
-    private $to = [];
+    /** @var \Symfony\Component\Mime\Address[] */
+    private array $bcc = [];
+    private string $body = '';
+    private array $bodyContext = [];
+    /** @var \Symfony\Component\Mime\Address[] */
+    private array $cc = [];
+    private ?Address $from = null;
+    private string $htmlTemplate = '';
+    /** @var \Symfony\Component\Mime\Address[] */
+    private array $recipients;
+    /** @var \Symfony\Component\Mime\Address[] */
+    private array $replyTo = [];
+    private string $subject = '';
+    private string $textTemplate = '';
 
     public function getBcc(): array
     {
@@ -31,7 +30,19 @@ final class EmailContext
 
     public function setBcc(array $bcc): EmailContext
     {
-        $this->bcc = $bcc;
+        $this->bcc = $this->extractAddresses($bcc);
+
+        return $this;
+    }
+
+    public function getBody(): string
+    {
+        return $this->body;
+    }
+
+    public function setBody(string $body): EmailContext
+    {
+        $this->body = $body;
 
         return $this;
     }
@@ -55,19 +66,21 @@ final class EmailContext
 
     public function setCc(array $cc): EmailContext
     {
-        $this->cc = $cc;
+        $this->cc = $this->extractAddresses($cc);
 
         return $this;
     }
 
-    public function getFrom(): array
+    public function getFrom(): Address
     {
         return $this->from;
     }
 
-    public function setFrom(array $from): EmailContext
+    public function setFrom($from = null): EmailContext
     {
-        $this->from = $from;
+        if ($from) {
+            $this->from = $this->extractAddress($from);
+        }
 
         return $this;
     }
@@ -84,10 +97,27 @@ final class EmailContext
         return $this;
     }
 
+    public function getRecipients(): array
+    {
+        return $this->recipients;
+    }
+
+    public function setRecipients($recipients): EmailContext
+    {
+        $this->recipients = $recipients;
+
+        return $this;
+    }
+
+    public function getRecipientAddresses(): array
+    {
+        return $this->extractAddresses($this->recipients);
+    }
+
     public function getReplyTo(): array
     {
         if (empty($this->replyTo)) {
-            return $this->from;
+            return $this->from ? [$this->from] : [];
         }
 
         return $this->replyTo;
@@ -95,7 +125,7 @@ final class EmailContext
 
     public function setReplyTo(array $replyTo): EmailContext
     {
-        $this->replyTo = $replyTo;
+        $this->replyTo = $this->extractAddresses($replyTo);
 
         return $this;
     }
@@ -124,15 +154,22 @@ final class EmailContext
         return $this;
     }
 
-    public function getTo(): array
+    private function extractAddress($address): Address
     {
-        return $this->to;
+        if ($address instanceof Recipient) {
+            return new Address($address->getEmail(), $address->getName());
+        }
+
+        return Address::create($address);
     }
 
-    public function setTo(array $to): EmailContext
+    private function extractAddresses(array $addresses): array
     {
-        $this->to = $to;
+        $results = [];
+        foreach ($addresses as $address) {
+            $results[] = $this->extractAddress($address);
+        }
 
-        return $this;
+        return $results;
     }
 }
