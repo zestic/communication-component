@@ -7,22 +7,26 @@ abstract class ChannelFactory implements ChannelFactoryInterface
 {
     protected function getBus(array $config): ?string
     {
-      return null;
-    }
-
-    protected function getRoutes(array $config): array
-    {
-        $routes = [];
+        $channelParts = explode('.', $this->channel);
+        $channelName = array_pop($channelParts);
         foreach ($config['routes'] as $name => $routeConfig) {
-            if (is_array($routeConfig)) {
-                // need to get array key for type
-                $type = '';
-                $routes[$name]['pipe'][$type] = $routeConfig;
-            } else {
-                $routes[$name]['pipe'][$routeConfig] = "communication.{$routeConfig}.{$name}";
+            if ($name != $channelName) {
+                continue;
             }
+            if (is_array($routeConfig)) {
+                if ('bus' != array_key_first($routeConfig)) {
+                    return null;
+                }
+
+                return $routeConfig['bus'];
+            }
+            if ('bus' != $routeConfig) {
+                return null;
+            }
+
+            return "communication.{$routeConfig}.{$name}";
         }
 
-        return $routes;
+        return null;
     }
 }

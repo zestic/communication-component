@@ -11,23 +11,19 @@ use Symfony\Component\Notifier\Channel\EmailChannel;
 final class EmailChannelFactory extends ChannelFactory
 {
     public function __construct(
-        private string $channel,
+        protected string $channel,
     ) {
     }
 
     public function __invoke(ContainerInterface $container): ChannelInterface
     {
         $config = (new GatherConfigValues)($container, 'communication');
-        $routes = $this->getRoutes($config);
-        if ($bus = $this->getBus($config)) {
-            $messageBusName = $channelConfig['message_bus'] ?? 'messenger.bus.email';
+        if ($messageBusName = $this->getBus($config)) {
             $messageBus = $container->get($messageBusName);
         } else {
             $messageBus = null;
         }
-        // figure out the route here
         $channelConfig = (new GatherConfigValues)($container, $this->channel);
-
         $transport = $container->get($channelConfig['transport']);
 
         $from = $channelConfig['from'] ?? null;

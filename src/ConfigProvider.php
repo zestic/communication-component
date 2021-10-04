@@ -58,29 +58,31 @@ class ConfigProvider
                 CommunicationFactory::class,
             ],
             'factories'          => [
-                'messenger.bus.email'                      => new MessageBusStaticFactory(
-                    'messenger.bus.email'
+                // bus config
+                'communication.bus.email'                      => new MessageBusStaticFactory(
+                    'communication.bus.email'
                 ),
-                'messenger.bus.email.sender-middleware'    => new MessageSenderMiddlewareStaticFactory(
-                    'messenger.bus.email'
+                'communication.bus.email.sender-middleware'    => new MessageSenderMiddlewareStaticFactory(
+                    'communication.bus.email'
                 ),
-                'messenger.bus.email.handler-middleware'   => new MessageHandlerMiddlewareStaticFactory(
-                    'messenger.bus.email'
+                'communication.bus.email.handler-middleware'   => new MessageHandlerMiddlewareStaticFactory(
+                    'communication.bus.email'
                 ),
-                'messenger.bus.email.bus-stamp-middleware' => new BusNameStampMiddlewareStaticFactory(
-                    'messenger.bus.email'
+                'communication.bus.email.bus-stamp-middleware' => new BusNameStampMiddlewareStaticFactory(
+                    'communication.bus.email'
                 ),
-                'messenger.transport.email'                => [TransportFactory::class, 'messenger.transport.email'],
-                'messenger.handler.email'                  => new MessageHandlerFactory(
-                    'communication.transport.email'
+                'communication.bus.transport.email'                => [TransportFactory::class, 'communication.bus.transport.email'],
+                'communication.bus.handler.email'                  => new MessageHandlerFactory(
+                    'communication.channel.transport.email'
                 ),
+                // channel config
                 'communication.channel.email'              => new EmailChannelFactory('communication.channel.email'),
-                'communication.transport.email'            => new CommunicationTransportFactory(
-                    'communication.transport.email'
+                'communication.channel.transport.email'            => new CommunicationTransportFactory(
+                    'communication.channel.transport.email'
                 ),
                 EmailBusLocator::class                     =>
                     new EmailBusLocatorFactory(
-                        'messenger.bus.email'
+                        'communication.bus.email'
                     ),
                 EventDispatcherInterface::class            => EventDispatcherFactory::class,
                 TwigExtension::class                       => TwigExtensionFactory::class,
@@ -94,22 +96,22 @@ class ConfigProvider
     {
         return [
             'routing'    => [
-                SendEmailMessage::class => 'messenger.transport.email',
+                SendEmailMessage::class => 'communication.bus.transport.email',
             ],
             'buses'      => [
-                'messenger.bus.email' => [
+                'communication.bus.email' => [
                     'allows_zero_handlers' => true,
                     'handler_locator'      => EmailBusLocator::class,
                     'handlers'             => [
-                        SendEmailMessage::class => ['messenger.handler.email'],
+                        SendEmailMessage::class => ['communication.bus.handler.email'],
                     ],
                     'middleware'           => [
-                        'messenger.bus.email.bus-stamp-middleware',
-                        'messenger.bus.email.sender-middleware',
-                        'messenger.bus.email.handler-middleware',
+                        'communication.bus.email.bus-stamp-middleware',
+                        'communication.bus.email.sender-middleware',
+                        'communication.bus.email.handler-middleware',
                     ],
                     'routes'               => [
-                        '*' => ['messenger.transport.email'],
+                        '*' => ['communication.bus.transport.email'],
                     ],
                 ],
             ],
@@ -120,7 +122,7 @@ class ConfigProvider
     private function getMessengerTransports(): array
     {
         return [
-            'messenger.transport.email' => [
+            'communication.bus.transport.email' => [
                 'dsn'            => 'doctrine://dbal-default?queue_name=email',
                 'serializer'     => PhpSerializer::class,
                 'options'        => [
@@ -141,7 +143,7 @@ class ConfigProvider
             'channel' => [
                 'email' => [
                     'factory'   => EmailNotificationFactory::class,
-                    'transport' => 'communication.transport.email',
+                    'transport' => 'communication.channel.transport.email',
                 ],
             ],
             'context' => [
