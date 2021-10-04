@@ -25,6 +25,7 @@ use Communication\Locator\EmailBusLocator;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Mailer\Messenger\SendEmailMessage;
 use Symfony\Component\Notifier\Notifier;
+use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 
@@ -71,23 +72,28 @@ class ConfigProvider
                 'communication.bus.email.bus-stamp-middleware' => new BusNameStampMiddlewareStaticFactory(
                     'communication.bus.email'
                 ),
-                'communication.bus.transport.email'                => [TransportFactory::class, 'communication.bus.transport.email'],
-                'communication.bus.handler.email'                  => new MessageHandlerFactory(
+                'communication.bus.transport.email'            => [
+                    TransportFactory::class,
+                    'communication.bus.transport.email',
+                ],
+                'communication.bus.handler.email'              => new MessageHandlerFactory(
                     'communication.channel.transport.email'
                 ),
                 // channel config
-                'communication.channel.email'              => new EmailChannelFactory('communication.channel.email'),
-                'communication.channel.transport.email'            => new CommunicationTransportFactory(
+                'communication.channel.email'                  => new EmailChannelFactory(
+                    'communication.channel.email'
+                ),
+                'communication.channel.transport.email'        => new CommunicationTransportFactory(
                     'communication.channel.transport.email'
                 ),
-                EmailBusLocator::class                     =>
+                EmailBusLocator::class                         =>
                     new EmailBusLocatorFactory(
                         'communication.bus.email'
                     ),
-                EventDispatcherInterface::class            => EventDispatcherFactory::class,
-                TwigExtension::class                       => TwigExtensionFactory::class,
-                Environment::class                         => TwigEnvironmentFactory::class,
-                Notifier::class                            => NotifierFactory::class,
+                EventDispatcherInterface::class                => EventDispatcherFactory::class,
+                TwigExtension::class                           => TwigExtensionFactory::class,
+                Environment::class                             => TwigEnvironmentFactory::class,
+                NotifierInterface::class                       => NotifierFactory::class,
             ],
         ];
     }
