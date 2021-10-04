@@ -71,7 +71,7 @@ final class EmailContext implements CommunicationContextInterface
         return $this;
     }
 
-    public function getFrom(): Address
+    public function getFrom(): ?Address
     {
         return $this->from;
     }

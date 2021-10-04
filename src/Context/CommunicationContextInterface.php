@@ -7,7 +7,7 @@ use Symfony\Component\Mime\Address;
 
 interface CommunicationContextInterface
 {
-    public function getFrom(): Address;
+    public function getFrom(): ?Address;
     public function setFrom($from);
     public function getRecipients(): array;
     public function setRecipients($recipients);
