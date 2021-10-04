@@ -14,19 +14,19 @@
     "mezzio/mezzio-twigrenderer": "^2.6",
     "netglue/laminas-messenger": "^1.0.3",
     "psr/container": "^1.0",
-    "symfony/dependency-injection": "^5.4",
-    "symfony/event-dispatcher": "^5.4",
-    "symfony/messenger": "^5.4",
-    "symfony/mailer": "^5.4",
-    "symfony/notifier": "^5.4",
-    "symfony/property-access": "^5.4",
-    "symfony/serializer": "^5.4",
-    "symfony/twig-bridge": "^5.4",
+    "symfony/dependency-injection": "^5.3",
+    "symfony/event-dispatcher": "^5.3",
+    "symfony/messenger": "^5.3",
+    "symfony/mailer": "^5.3",
+    "symfony/notifier": "^5.3",
+    "symfony/property-access": "^5.3",
+    "symfony/serializer": "^5.3",
+    "symfony/twig-bridge": "^5.3",
     "twig/inky-extra": "^3.1",
     "twig/twig": "^3.0"
   },
   "require-dev": {
-    "symfony/amazon-mailer": "^5.4"
+    "symfony/amazon-mailer": "^5.3"
   },
   "minimum-stability": "dev",
   "autoload": {
