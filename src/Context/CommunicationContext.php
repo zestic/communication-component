@@ -28,6 +28,13 @@ final class CommunicationContext
         return $this;
     }
 
+    public function addEmailContext(string $name, $value): CommunicationContext
+    {
+        $this->channelContexts['email']->addBodyContext($name, $value);
+
+        return $this;
+    }
+
     public function getContext(string $name)
     {
         return $this->channelContexts[$name];

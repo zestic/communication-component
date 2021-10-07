@@ -60,6 +60,13 @@ final class EmailContext implements CommunicationContextInterface
         return $this;
     }
 
+    public function addBodyContext(string $name, $value): EmailContext
+    {
+        $this->bodyContext[$name] = $value;
+
+        return $this;
+    }
+
     public function getBodyContext(): array
     {
         return $this->bodyContext;
