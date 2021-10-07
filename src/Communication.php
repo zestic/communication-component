@@ -44,11 +44,11 @@ abstract class Communication
     public function send()
     {
         $this->setTemplates();
-        foreach ($this->channelRecipients as $channel => $recipients) {
+        foreach ($this->getChannelRecipients() as $channel => $recipients) {
             if (!empty($recipients)) {
                 foreach ($recipients as $recipient) {
-                    $communication = $this->createNotification($channel);
-                    $this->notifier->send($communication, $recipient);
+                    $notification = $this->createNotification($channel);
+                    $this->notifier->send($notification, $recipient);
                 }
             }
         }
@@ -57,6 +57,11 @@ abstract class Communication
     public function setFrom(Recipient|Address|string $address)
     {
         $this->context->setFrom($address);
+    }
+
+    protected function getChannelRecipients(): array
+    {
+        return $this->channelRecipients;
     }
 
     abstract protected function getAllowedChannels(): array;
