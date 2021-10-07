@@ -7,5 +7,5 @@ use Psr\Container\ContainerInterface;
 
 interface ContextFactoryInterface
 {
-    public function create(ContainerInterface $container, array $data);
+    public function create(ContainerInterface $container, array $config);
 }

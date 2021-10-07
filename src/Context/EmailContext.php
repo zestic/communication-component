@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace Communication\Context;
 
+use Communication\Factory\Message\MessageFactoryInterface;
 use Communication\Recipient;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Notifier\Message\EmailMessage;
+use Symfony\Component\Notifier\Message\MessageInterface;
 
 final class EmailContext implements CommunicationContextInterface
 {
@@ -22,6 +25,16 @@ final class EmailContext implements CommunicationContextInterface
     private array $replyTo = [];
     private string $subject = '';
     private string $textTemplate = '';
+
+    public function __construct(
+        private MessageFactoryInterface $emailMessageFactory,
+    ) {
+    }
+
+    public function createMessage(): MessageInterface|EmailMessage
+    {
+        return $this->emailMessageFactory->createMessage($this);
+    }
 
     public function getBcc(): array
     {

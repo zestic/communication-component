@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Communication\Communication;
 
 use Communication\Communication;
-use Symfony\Component\Mime\Address;
 
 final class GenericCommunication extends Communication
 {

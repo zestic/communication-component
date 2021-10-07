@@ -53,9 +53,9 @@ class CommunicationFactory implements AbstractFactoryInterface
     protected function getContext(ContainerInterface $container, array $config): CommunicationContext
     {
         $contexts = [];
-        foreach ($config as $channel => $context) {
-            $factory = $context['factory'];
-            $contexts[$channel] = (new $factory())->create($container, $context['data']);
+        foreach ($config as $channel => $config) {
+            $factory = $config['factory'];
+            $contexts[$channel] = (new $factory())->create($container, $config);
         }
 
         return new CommunicationContext($contexts);

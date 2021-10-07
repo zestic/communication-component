@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Communication;
 
+use Communication\Factory\Message\EmailMessageFactory;
 use Mezzio\Twig\TwigEnvironmentFactory;
 use Mezzio\Twig\TwigExtension;
 use Mezzio\Twig\TwigExtensionFactory;
@@ -157,6 +158,7 @@ class ConfigProvider
                     'factory' => EmailContextFactory::class,
                     'data'    => [
                     ],
+                    'messageFactory' => EmailMessageFactory::class,
                 ],
             ],
         ];
