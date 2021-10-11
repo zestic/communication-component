@@ -19,11 +19,11 @@ class CommunicationFactory implements AbstractFactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config')['communication'];
-        $communicationFactories = $this->getCommunicationFactories($container, $config['channel']);
+        $notificationFactories = $this->getNotificationFactories($container, $config['channel']);
         $context = $this->getContext($container, $config['context']);
         $notifier = $container->get(NotifierInterface::class);
 
-        return new $requestedName($context, $communicationFactories, $notifier);
+        return new $requestedName($context, $notificationFactories, $notifier);
     }
 
     protected function getChannels(string $requestedName, array $config): array
@@ -40,7 +40,7 @@ class CommunicationFactory implements AbstractFactoryInterface
         return $channels;
     }
 
-    protected function getCommunicationFactories(ContainerInterface $container, array $config): array
+    protected function getNotificationFactories(ContainerInterface $container, array $config): array
     {
         $factories = [];
         foreach ($config as $channel => $settings) {
@@ -53,9 +53,9 @@ class CommunicationFactory implements AbstractFactoryInterface
     protected function getContext(ContainerInterface $container, array $config): CommunicationContext
     {
         $contexts = [];
-        foreach ($config as $channel => $config) {
-            $factory = $config['factory'];
-            $contexts[$channel] = (new $factory())->create($container, $config);
+        foreach ($config as $channel => $channelConfig) {
+            $factory = $channelConfig['factory'];
+            $contexts[$channel] = (new $factory())->create($container, $channelConfig);
         }
 
         return new CommunicationContext($contexts);

@@ -9,17 +9,15 @@ use Symfony\Component\Notifier\Recipient\EmailRecipientTrait;
 use Symfony\Component\Notifier\Recipient\SmsRecipientInterface;
 use Symfony\Component\Notifier\Recipient\SmsRecipientTrait;
 
-final class Recipient implements EmailRecipientInterface, SmsRecipientInterface
+class Recipient implements EmailRecipientInterface, SmsRecipientInterface
 {
     use EmailRecipientTrait;
     use SmsRecipientTrait;
 
-    /** @var string[] */
-    private array $channels;
     private string $name = '';
 
     public function __construct(
-        array $channels = [],
+        private array $channels = [],
     ) {
     }
 

@@ -10,7 +10,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Message\MessageInterface;
 
-final class EmailMessageFactory implements MessageFactoryInterface
+class EmailMessageFactory implements MessageFactoryInterface
 {
     public function __construct(
         private BodyRenderer $renderer

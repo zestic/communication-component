@@ -28,6 +28,15 @@ final class CommunicationContext
         return $this;
     }
 
+    public function addToContext(string $name, $value): CommunicationContext
+    {
+        foreach ($this->channelContexts as $channel => $context) {
+            $this->channelContexts[$channel]->addBodyContext($name, $value);
+        }
+
+        return $this;
+    }
+
     public function addEmailContext(string $name, $value): CommunicationContext
     {
         $this->channelContexts['email']->addBodyContext($name, $value);

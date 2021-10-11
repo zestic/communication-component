@@ -6,7 +6,7 @@ namespace Communication\Factory\Context;
 use Communication\Context\EmailContext;
 use Psr\Container\ContainerInterface;
 
-final class EmailContextFactory implements ContextFactoryInterface
+class EmailContextFactory implements ContextFactoryInterface
 {
     public function create(ContainerInterface $container, array $config): EmailContext
     {
