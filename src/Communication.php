@@ -46,9 +46,10 @@ abstract class Communication
         $this->setTemplates();
         foreach ($this->getChannelRecipients() as $channel => $recipients) {
             if (!empty($recipients)) {
-                foreach ($recipients as $recipient) {
+                foreach ($recipients as $index => $recipient) {
                     $notification = $this->createNotification($channel);
                     $this->notifier->send($notification, $recipient);
+                    $this->removeRecipientAtIndex($channel, $index);
                 }
             }
         }
@@ -65,6 +66,7 @@ abstract class Communication
     }
 
     abstract protected function getAllowedChannels(): array;
+
     abstract protected function getTemplates(): array;
 
     private function addRecipientToChannels(Recipient $recipient)
@@ -82,6 +84,11 @@ abstract class Communication
         $context = $this->context->getContext($channel);
 
         return $factory->create($context, $channel);
+    }
+
+    private function removeRecipientAtIndex(string $channel, $index)
+    {
+        unset($this->channelRecipients[$channel][$index]);
     }
 
     private function setTemplates()
