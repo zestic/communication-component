@@ -87,6 +87,7 @@ class ConfigProvider
                 'communication.channel.transport.email'        => new CommunicationTransportFactory(
                     'communication.channel.transport.email'
                 ),
+                'messenger.transport.failed'                   => [TransportFactory::class, 'messenger.transport.failed'],
                 EmailBusLocator::class                         =>
                     new EmailBusLocatorFactory(
                         'communication.bus.email'
@@ -122,6 +123,7 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'failure_transport'  => 'messenger.transport.failed',
             'transports' => $this->getMessengerTransports(),
         ];
     }
@@ -131,6 +133,18 @@ class ConfigProvider
         return [
             'communication.bus.transport.email' => [
                 'dsn'            => 'doctrine://dbal-default?queue_name=email',
+                'serializer'     => PhpSerializer::class,
+                'options'        => [
+                ],
+                'retry_strategy' => [
+                    'max_retries' => 3,
+                    'delay'       => 100,
+                    'multiplier'  => 2,
+                    'max_delay'   => 0,
+                ],
+            ],
+            'messenger.transport.failed' => [
+                'dsn'            => 'doctrine://dbal-default?queue_name=failed',
                 'serializer'     => PhpSerializer::class,
                 'options'        => [
                 ],
