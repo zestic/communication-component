@@ -75,3 +75,37 @@ vendor/bin/laminas messenger:consume communication.bus.transport.email
 ```
 
 This will start the consumer. Your test email will now be in your inbox.
+
+## Handling Failures
+
+To get a list of the failed messages, run this command
+```bash
+vendor/bin/laminas messenger:failed:show -vv
+```
+
+You can see details about a specific failure
+```bash
+vendor/bin/laminas messenger:failed:show {id} -vv
+```
+
+You can view and retry messages one-by-one
+```bash
+vendor/bin/laminas messenger:failed:retry -vv
+```
+
+You can retry specific messages
+```bash
+vendor/bin/laminas messenger:failed:retry {id1} {id2} --force
+```
+
+You can retry all messages at once
+```bash
+vendor/bin/laminas messenger:failed:retry --force
+```
+
+You can also remove a message without retrying it
+```bash
+vendor/bin/laminas messenger:failed:remove {id}
+```
+
+
