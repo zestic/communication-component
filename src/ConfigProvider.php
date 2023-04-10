@@ -22,10 +22,9 @@ use Communication\Factory\Transport\CommunicationTransportFactory;
 use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\MessageHandlerFactory;
 use Communication\Factory\CommunicationFactory;
-use Communication\Locator\EmailBusLocator;
+use Netglue\PsrContainer\Messenger\HandlerLocator\OneToManyFqcnContainerHandlerLocator;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Mailer\Messenger\SendEmailMessage;
-use Symfony\Component\Notifier\Notifier;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
@@ -88,7 +87,7 @@ class ConfigProvider
                     'communication.channel.transport.email'
                 ),
                 'messenger.transport.failed'                   => [TransportFactory::class, 'messenger.transport.failed'],
-                EmailBusLocator::class                         =>
+                OneToManyFqcnContainerHandlerLocator::class                         =>
                     new EmailBusLocatorFactory(
                         'communication.bus.email'
                     ),
@@ -109,7 +108,7 @@ class ConfigProvider
             'buses'      => [
                 'communication.bus.email' => [
                     'allows_zero_handlers' => true,
-                    'handler_locator'      => EmailBusLocator::class,
+                    'handler_locator'      => OneToManyFqcnContainerHandlerLocator::class,
                     'handlers'             => [
                         SendEmailMessage::class => ['communication.bus.handler.email'],
                     ],
