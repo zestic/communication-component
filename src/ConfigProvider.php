@@ -38,7 +38,7 @@ class ConfigProvider
             'dependencies'  => $this->getDependencies(),
             'laminas-cli'   => $this->getConsoleConfig(),
             'communication' => $this->getCommunicationConfig(),
-            'framework'     => [
+            'symfony'     => [
                 'messenger' => $this->getMessengerConfig(),
             ],
         ];
