@@ -130,7 +130,7 @@ class ConfigProvider
     private function getMessengerTransports(): array
     {
         $transportDNS = getenv('COMMUNICATION_MESSENGER_TRANSPORT_DSN') ?
-            getenv('COMMUNICATION_MESSENGER_TRANSPORT_DSN') : 'doctrine://dbal-default?queue_name=communication';
+            getenv('COMMUNICATION_MESSENGER_TRANSPORT_DSN') : 'doctrine://dbal-default?queue_name=email';
 
         return [
             'communication.bus.transport.email' => [
