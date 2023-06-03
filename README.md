@@ -61,13 +61,21 @@ return [
 ];
 ```
 
+This will default to using the Doctrine transport. If you want to change the transort, in your .env file add the 
+transport.
+```bash
+COMMUNICATION_MESSENGER_TRANSPORT_DNS=redis://localhost:6379/messages
+```
+
+Refer to the [Symfony Messenger Transport Configuration documentation](https://symfony.com/doc/current/messenger.html#transport-configuration) 
+for more information on available transport configurations.
+
 Once again run
 ```bash
 vendor/bin/laminas communication:send-test-email your-email@your-url.com --from=your-from-address@your-url.com
 ```
 
-A table in your MySQL database will be created automatically to handle the messages.
-However, if you check, you will not see the email in your inbox. That's because you need to 
+The command will complete, however, if you check, you will not see the email in your inbox. That's because you need to 
 start the message consumer. That is a pretty straight forward process.
 
 ```bash
@@ -75,6 +83,9 @@ vendor/bin/laminas messenger:consume communication.bus.transport.email
 ```
 
 This will start the consumer. Your test email will now be in your inbox.
+
+See more information on how to set up your consumers in the 
+[Symfony Messenger documentation](https://symfony.com/doc/current/messenger.html#consuming-messages-running-the-worker)
 
 ## Handling Failures
 

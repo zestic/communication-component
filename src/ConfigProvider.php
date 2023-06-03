@@ -129,9 +129,12 @@ class ConfigProvider
 
     private function getMessengerTransports(): array
     {
+        $transportDNS = getenv('COMMUNICATION_MESSENGER_TRANSPORT_DSN') ?
+            getenv('COMMUNICATION_MESSENGER_TRANSPORT_DSN') : 'doctrine://dbal-default?queue_name=communication';
+
         return [
             'communication.bus.transport.email' => [
-                'dsn'            => 'doctrine://dbal-default?queue_name=email',
+                'dsn'            => $transportDNS,
                 'serializer'     => PhpSerializer::class,
                 'options'        => [
                 ],
@@ -143,7 +146,7 @@ class ConfigProvider
                 ],
             ],
             'messenger.transport.failed' => [
-                'dsn'            => 'doctrine://dbal-default?queue_name=failed',
+                'dsn'            => $transportDNS,
                 'serializer'     => PhpSerializer::class,
                 'options'        => [
                 ],
