@@ -13,12 +13,12 @@ class CommunicationFactory implements AbstractFactoryInterface
 {
     use CommunicationFactoryTrait;
 
-    public function canCreate(ContainerInterface $container, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName): bool
     {
         return (is_a($requestedName, Communication::class, true));
     }
 
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): mixed
     {
         $config = $container->get('config')['communication'];
         $notificationFactories = $this->getNotificationFactories($container, $config['channel']);

@@ -17,7 +17,7 @@ final class MessageHandlerFactory implements FactoryInterface
         $this->transport = $transport;
     }
 
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): mixed
     {
         $transport = $container->get($this->transport);
 
