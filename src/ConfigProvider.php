@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication;
 
+use Communication\Factory\BodyRendererFactory;
 use Communication\Factory\Message\EmailMessageFactory;
 use Mezzio\Twig\TwigEnvironmentFactory;
 use Mezzio\Twig\TwigExtension;
@@ -23,6 +25,7 @@ use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\MessageHandlerFactory;
 use Communication\Factory\CommunicationFactory;
 use Netglue\PsrContainer\Messenger\HandlerLocator\OneToManyFqcnContainerHandlerLocator;
+use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Mailer\Messenger\SendEmailMessage;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -37,7 +40,7 @@ class ConfigProvider
             'dependencies'  => $this->getDependencies(),
             'laminas-cli'   => $this->getConsoleConfig(),
             'communication' => $this->getCommunicationConfig(),
-            'symfony'     => [
+            'symfony'       => [
                 'messenger' => $this->getMessengerConfig(),
             ],
         ];
@@ -86,15 +89,19 @@ class ConfigProvider
                 'communication.channel.transport.email'        => new CommunicationTransportFactory(
                     'communication.channel.transport.email'
                 ),
-                'messenger.transport.failed'                   => [TransportFactory::class, 'messenger.transport.failed'],
-                OneToManyFqcnContainerHandlerLocator::class                         =>
+                'messenger.transport.failed'                   => [
+                    TransportFactory::class,
+                    'messenger.transport.failed',
+                ],
+                OneToManyFqcnContainerHandlerLocator::class    =>
                     new EmailBusLocatorFactory(
                         'communication.bus.email'
                     ),
                 EventDispatcherInterface::class                => EventDispatcherFactory::class,
-                TwigExtension::class                           => TwigExtensionFactory::class,
-                Environment::class                             => TwigEnvironmentFactory::class,
                 NotifierInterface::class                       => NotifierFactory::class,
+                BodyRenderer::class                            => BodyRendererFactory::class,
+                Environment::class                             => TwigEnvironmentFactory::class,
+                TwigExtension::class                           => TwigExtensionFactory::class,
             ],
         ];
     }
@@ -102,10 +109,10 @@ class ConfigProvider
     private function getMessengerConfig(): array
     {
         return [
-            'routing'    => [
+            'routing'           => [
                 SendEmailMessage::class => 'communication.bus.transport.email',
             ],
-            'buses'      => [
+            'buses'             => [
                 'communication.bus.email' => [
                     'allows_zero_handlers' => true,
                     'handler_locator'      => OneToManyFqcnContainerHandlerLocator::class,
@@ -122,8 +129,8 @@ class ConfigProvider
                     ],
                 ],
             ],
-            'failure_transport'  => 'messenger.transport.failed',
-            'transports' => $this->getMessengerTransports(),
+            'failure_transport' => 'messenger.transport.failed',
+            'transports'        => $this->getMessengerTransports(),
         ];
     }
 
@@ -145,7 +152,7 @@ class ConfigProvider
                     'max_delay'   => 0,
                 ],
             ],
-            'messenger.transport.failed' => [
+            'messenger.transport.failed'        => [
                 'dsn'            => $transportDNS,
                 'serializer'     => PhpSerializer::class,
                 'options'        => [
@@ -171,8 +178,8 @@ class ConfigProvider
             ],
             'context' => [
                 'email' => [
-                    'factory' => EmailContextFactory::class,
-                    'data'    => [
+                    'factory'        => EmailContextFactory::class,
+                    'data'           => [
                     ],
                     'messageFactory' => EmailMessageFactory::class,
                 ],

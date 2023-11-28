@@ -13,7 +13,7 @@ use Symfony\Component\Notifier\Message\MessageInterface;
 class EmailMessageFactory implements MessageFactoryInterface
 {
     public function __construct(
-        private BodyRenderer $renderer
+        private BodyRenderer $renderer,
     ) {
     }
 
