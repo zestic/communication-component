@@ -4,16 +4,6 @@ declare(strict_types=1);
 
 namespace Communication;
 
-use Communication\Factory\BodyRendererFactory;
-use Communication\Factory\Message\EmailMessageFactory;
-use Mezzio\Twig\TwigEnvironmentFactory;
-use Mezzio\Twig\TwigExtension;
-use Mezzio\Twig\TwigExtensionFactory;
-use Netglue\PsrContainer\Messenger\Container\MessageBusStaticFactory;
-use Netglue\PsrContainer\Messenger\Container\Middleware\BusNameStampMiddlewareStaticFactory;
-use Netglue\PsrContainer\Messenger\Container\Middleware\MessageHandlerMiddlewareStaticFactory;
-use Netglue\PsrContainer\Messenger\Container\Middleware\MessageSenderMiddlewareStaticFactory;
-use Netglue\PsrContainer\Messenger\Container\TransportFactory;
 use Communication\Command\SendTestEmailCommand;
 use Communication\Factory\Channel\EmailChannelFactory;
 use Communication\Factory\Notification\EmailNotificationFactory;
@@ -24,6 +14,17 @@ use Communication\Factory\Transport\CommunicationTransportFactory;
 use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\MessageHandlerFactory;
 use Communication\Factory\CommunicationFactory;
+use Communication\Factory\BodyRendererFactory;
+use Communication\Factory\Message\EmailMessageFactory;
+use Communication\Locator\CommunicationBusLocator;
+use Mezzio\Twig\TwigEnvironmentFactory;
+use Mezzio\Twig\TwigExtension;
+use Mezzio\Twig\TwigExtensionFactory;
+use Netglue\PsrContainer\Messenger\Container\MessageBusStaticFactory;
+use Netglue\PsrContainer\Messenger\Container\Middleware\BusNameStampMiddlewareStaticFactory;
+use Netglue\PsrContainer\Messenger\Container\Middleware\MessageHandlerMiddlewareStaticFactory;
+use Netglue\PsrContainer\Messenger\Container\Middleware\MessageSenderMiddlewareStaticFactory;
+use Netglue\PsrContainer\Messenger\Container\TransportFactory;
 use Netglue\PsrContainer\Messenger\HandlerLocator\OneToManyFqcnContainerHandlerLocator;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
@@ -93,7 +94,7 @@ class ConfigProvider
                     TransportFactory::class,
                     'messenger.transport.failed',
                 ],
-                OneToManyFqcnContainerHandlerLocator::class    =>
+                CommunicationBusLocator::class    =>
                     new EmailBusLocatorFactory(
                         'communication.bus.email'
                     ),
@@ -115,7 +116,7 @@ class ConfigProvider
             'buses'             => [
                 'communication.bus.email' => [
                     'allows_zero_handlers' => true,
-                    'handler_locator'      => OneToManyFqcnContainerHandlerLocator::class,
+                    'handler_locator'      => CommunicationBusLocator::class,
                     'handlers'             => [
                         SendEmailMessage::class => ['communication.bus.handler.email'],
                     ],

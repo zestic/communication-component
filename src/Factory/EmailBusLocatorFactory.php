@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Communication\Factory;
 
+use Communication\Locator\CommunicationBusLocator;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Netglue\PsrContainer\Messenger\Container\Util;
-use Netglue\PsrContainer\Messenger\HandlerLocator\OneToManyFqcnContainerHandlerLocator;
 use Psr\Container\ContainerInterface;
 
 final class EmailBusLocatorFactory implements FactoryInterface
@@ -18,6 +18,6 @@ final class EmailBusLocatorFactory implements FactoryInterface
     {
         $options = Util::messageBusOptions($container, $this->busIdentifier);
 
-        return new OneToManyFqcnContainerHandlerLocator($options->handlers(), $container);
+        return new CommunicationBusLocator($options->handlers(), $container);
     }
 }
