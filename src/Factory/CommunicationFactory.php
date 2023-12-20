@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Communication\Factory;
 
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
-use Communication\Context\CommunicationContext;
 use Communication\Communication;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Notifier\NotifierInterface;
