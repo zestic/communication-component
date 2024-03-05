@@ -41,6 +41,14 @@ abstract class Communication
         return $this;
     }
 
+    public function createNotification($channel): Notification
+    {
+        $factory = $this->notificationFactories[$channel];
+        $context = $this->context->getContext($channel);
+
+        return $factory->create($context, $channel);
+    }
+
     public function send()
     {
         $this->setTemplates();
@@ -76,14 +84,6 @@ abstract class Communication
                 $this->channelRecipients[$channel][] = $recipient;
             }
         }
-    }
-
-    private function createNotification($channel): Notification
-    {
-        $factory = $this->notificationFactories[$channel];
-        $context = $this->context->getContext($channel);
-
-        return $factory->create($context, $channel);
     }
 
     private function removeRecipientAtIndex(string $channel, $index)
