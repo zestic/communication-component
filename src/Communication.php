@@ -15,8 +15,8 @@ abstract class Communication
 
     public function __construct(
         protected CommunicationContext $context,
-        private array $notificationFactories,
-        private NotifierInterface $notifier,
+        private readonly array $notificationFactories,
+        private readonly NotifierInterface $notifier,
     ) {
         foreach ($this->getAllowedChannels() as $channel) {
             $this->channelRecipients[$channel] = [];

@@ -51,10 +51,12 @@ class Recipient implements EmailRecipientInterface, SmsRecipientInterface
         return $this;
     }
 
-    public function setPhone(string $phone): Recipient
+    public function setPhone(?string $phone): Recipient
     {
-        $this->phone = $phone;
-        $this->channels[] = 'sms';
+        if ($phone) {
+            $this->phone = $phone;
+            $this->channels[] = 'sms';
+        }
 
         return $this;
     }
