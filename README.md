@@ -119,4 +119,6 @@ You can also remove a message without retrying it
 vendor/bin/laminas messenger:failed:remove {id}
 ```
 
-
+### Future plans
+* Some refactoring to decrease complexity
+* Allow part of context to be overridden by the Recipient

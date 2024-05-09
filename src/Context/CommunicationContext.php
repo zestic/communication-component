@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Communication\Context;
 
-final class CommunicationContext
+class CommunicationContext
 {
     /**
-     * @var object[] $channelContexts
+     * @var CommunicationContextInterface[] $channelContexts
      */
     public function __construct(
         private array $channelContexts = [],
@@ -47,6 +47,15 @@ final class CommunicationContext
     public function getContext(string $name)
     {
         return $this->channelContexts[$name];
+    }
+
+    public function setBodyContext($from): CommunicationContext
+    {
+        foreach ($this->channelContexts as $context) {
+            $context->setBodyContext($from);
+        }
+
+        return $this;
     }
 
     public function setFrom($from): CommunicationContext
