@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Command;
@@ -17,7 +18,7 @@ final class SendTestEmailCommand extends Command
 
     public function __construct(
         private GenericCommunication $communication,
-    )  {
+    ) {
         parent::__construct();
     }
 

@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Factory\Notification;
 
-use Communication\Context\CommunicationContext;
 use Communication\Context\CommunicationContextInterface;
 use Symfony\Component\Notifier\Notification\Notification;
 

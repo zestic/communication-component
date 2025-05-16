@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Factory\Transport;
@@ -15,7 +16,7 @@ final class CommunicationTransportFactory
 
     public function __invoke(ContainerInterface $container)
     {
-        $config = (new GatherConfigValues)($container, $this->config);
+        $config = (new GatherConfigValues())($container, $this->config);
         $type = ucfirst(strtolower($config['type']));
         $transportFactory = "Communication\\Factory\\Transport\\Email\\{$type}Factory";
 

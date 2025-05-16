@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Factory\Channel;
@@ -17,13 +18,13 @@ final class EmailChannelFactory extends ChannelFactory
 
     public function __invoke(ContainerInterface $container): ChannelInterface
     {
-        $config = (new GatherConfigValues)($container, 'communication');
+        $config = (new GatherConfigValues())($container, 'communication');
         if ($messageBusName = $this->getBus($config)) {
             $messageBus = $container->get($messageBusName);
         } else {
             $messageBus = null;
         }
-        $channelConfig = (new GatherConfigValues)($container, $this->channel);
+        $channelConfig = (new GatherConfigValues())($container, $this->channel);
         $transport = $container->get($channelConfig['transport']);
 
         $from = $channelConfig['from'] ?? null;

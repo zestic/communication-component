@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Factory;
 
-use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Communication\Communication;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Notifier\NotifierInterface;
 

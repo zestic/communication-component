@@ -1,0 +1,13 @@
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        - '#Call to an undefined method Mockery\\ExpectationInterface\|Mockery\\HigherOrderMessage::#'
+        - '#Call to an undefined method Mockery\\MockInterface\|PDO::#'
+        - '#Call to an undefined method Communication\\Template\\TemplateRepositoryInterface\|Mockery\\MockInterface::#'
+        - '#Property [a-zA-Z0-9\\]+::\$[a-zA-Z0-9]+ \([^)]+\) does not accept Mockery\\LegacyMockInterface#'
+        - '#Parameter \#1 \$[a-zA-Z0-9]+ of class [a-zA-Z0-9\\]+ constructor expects [^,]+, Mockery\\LegacyMockInterface given#'

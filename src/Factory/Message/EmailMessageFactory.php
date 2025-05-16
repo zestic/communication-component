@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Factory\Message;
@@ -19,8 +20,7 @@ class EmailMessageFactory implements MessageFactoryInterface
 
     public function createMessage(
         EmailContext|CommunicationContextInterface $emailContext,
-    ): EmailMessage|MessageInterface
-    {
+    ): EmailMessage|MessageInterface {
         $email = (new TemplatedEmail())
             ->context($emailContext->getBodyContext())
             ->subject($emailContext->getSubject());

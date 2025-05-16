@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Context;
@@ -13,17 +14,26 @@ final class EmailContext implements CommunicationContextInterface
 {
     /** @var \Symfony\Component\Mime\Address[] */
     private array $bcc = [];
+
     private string $body = '';
+
     private array $bodyContext = [];
+
     /** @var \Symfony\Component\Mime\Address[] */
     private array $cc = [];
+
     private ?Address $from = null;
+
     private string $htmlTemplate = '';
+
     /** @var \Symfony\Component\Mime\Address[] */
     private array $recipients;
+
     /** @var \Symfony\Component\Mime\Address[] */
     private array $replyTo = [];
+
     private string $subject = '';
+
     private string $textTemplate = '';
 
     public function __construct(

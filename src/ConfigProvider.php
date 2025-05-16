@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Communication;
 
 use Communication\Command\SendTestEmailCommand;
+use Communication\Factory\BodyRendererFactory;
 use Communication\Factory\Channel\EmailChannelFactory;
-use Communication\Factory\Notification\EmailNotificationFactory;
+use Communication\Factory\CommunicationFactory;
 use Communication\Factory\Context\EmailContextFactory;
+use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\EventDispatcherFactory;
+use Communication\Factory\Message\EmailMessageFactory;
+use Communication\Factory\MessageHandlerFactory;
+use Communication\Factory\Notification\EmailNotificationFactory;
 use Communication\Factory\NotifierFactory;
 use Communication\Factory\Transport\CommunicationTransportFactory;
-use Communication\Factory\EmailBusLocatorFactory;
-use Communication\Factory\MessageHandlerFactory;
-use Communication\Factory\CommunicationFactory;
-use Communication\Factory\BodyRendererFactory;
-use Communication\Factory\Message\EmailMessageFactory;
 use Communication\Locator\CommunicationBusLocator;
 use Mezzio\Twig\TwigEnvironmentFactory;
 use Mezzio\Twig\TwigExtension;
@@ -25,10 +25,9 @@ use Netglue\PsrContainer\Messenger\Container\Middleware\BusNameStampMiddlewareSt
 use Netglue\PsrContainer\Messenger\Container\Middleware\MessageHandlerMiddlewareStaticFactory;
 use Netglue\PsrContainer\Messenger\Container\Middleware\MessageSenderMiddlewareStaticFactory;
 use Netglue\PsrContainer\Messenger\Container\TransportFactory;
-use Netglue\PsrContainer\Messenger\HandlerLocator\OneToManyFqcnContainerHandlerLocator;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
-use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Mailer\Messenger\SendEmailMessage;
+use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
@@ -38,10 +37,10 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies'  => $this->getDependencies(),
-            'laminas-cli'   => $this->getConsoleConfig(),
+            'dependencies' => $this->getDependencies(),
+            'laminas-cli' => $this->getConsoleConfig(),
             'communication' => $this->getCommunicationConfig(),
-            'symfony'       => [
+            'symfony' => [
                 'messenger' => $this->getMessengerConfig(),
             ],
         ];
@@ -62,47 +61,47 @@ class ConfigProvider
             'abstract_factories' => [
                 CommunicationFactory::class,
             ],
-            'factories'          => [
+            'factories' => [
                 // bus config
-                'communication.bus.email'                      => new MessageBusStaticFactory(
+                'communication.bus.email' => new MessageBusStaticFactory(
                     'communication.bus.email'
                 ),
-                'communication.bus.email.sender-middleware'    => new MessageSenderMiddlewareStaticFactory(
+                'communication.bus.email.sender-middleware' => new MessageSenderMiddlewareStaticFactory(
                     'communication.bus.email'
                 ),
-                'communication.bus.email.handler-middleware'   => new MessageHandlerMiddlewareStaticFactory(
+                'communication.bus.email.handler-middleware' => new MessageHandlerMiddlewareStaticFactory(
                     'communication.bus.email'
                 ),
                 'communication.bus.email.bus-stamp-middleware' => new BusNameStampMiddlewareStaticFactory(
                     'communication.bus.email'
                 ),
-                'communication.bus.transport.email'            => [
+                'communication.bus.transport.email' => [
                     TransportFactory::class,
                     'communication.bus.transport.email',
                 ],
-                'communication.bus.handler.email'              => new MessageHandlerFactory(
+                'communication.bus.handler.email' => new MessageHandlerFactory(
                     'communication.channel.transport.email'
                 ),
                 // channel config
-                'communication.channel.email'                  => new EmailChannelFactory(
+                'communication.channel.email' => new EmailChannelFactory(
                     'communication.channel.email'
                 ),
-                'communication.channel.transport.email'        => new CommunicationTransportFactory(
+                'communication.channel.transport.email' => new CommunicationTransportFactory(
                     'communication.channel.transport.email'
                 ),
-                'messenger.transport.failed'                   => [
+                'messenger.transport.failed' => [
                     TransportFactory::class,
                     'messenger.transport.failed',
                 ],
-                CommunicationBusLocator::class    =>
+                CommunicationBusLocator::class =>
                     new EmailBusLocatorFactory(
                         'communication.bus.email'
                     ),
-                EventDispatcherInterface::class                => EventDispatcherFactory::class,
-                NotifierInterface::class                       => NotifierFactory::class,
-                BodyRenderer::class                            => BodyRendererFactory::class,
-                Environment::class                             => TwigEnvironmentFactory::class,
-                TwigExtension::class                           => TwigExtensionFactory::class,
+                EventDispatcherInterface::class => EventDispatcherFactory::class,
+                NotifierInterface::class => NotifierFactory::class,
+                BodyRenderer::class => BodyRendererFactory::class,
+                Environment::class => TwigEnvironmentFactory::class,
+                TwigExtension::class => TwigExtensionFactory::class,
             ],
         ];
     }
@@ -110,28 +109,28 @@ class ConfigProvider
     private function getMessengerConfig(): array
     {
         return [
-            'routing'           => [
+            'routing' => [
                 SendEmailMessage::class => 'communication.bus.transport.email',
             ],
-            'buses'             => [
+            'buses' => [
                 'communication.bus.email' => [
                     'allows_zero_handlers' => true,
-                    'handler_locator'      => CommunicationBusLocator::class,
-                    'handlers'             => [
+                    'handler_locator' => CommunicationBusLocator::class,
+                    'handlers' => [
                         SendEmailMessage::class => ['communication.bus.handler.email'],
                     ],
-                    'middleware'           => [
+                    'middleware' => [
                         'communication.bus.email.bus-stamp-middleware',
                         'communication.bus.email.sender-middleware',
                         'communication.bus.email.handler-middleware',
                     ],
-                    'routes'               => [
+                    'routes' => [
                         '*' => ['communication.bus.transport.email'],
                     ],
                 ],
             ],
             'failure_transport' => 'messenger.transport.failed',
-            'transports'        => $this->getMessengerTransports(),
+            'transports' => $this->getMessengerTransports(),
         ];
     }
 
@@ -142,27 +141,27 @@ class ConfigProvider
 
         return [
             'communication.bus.transport.email' => [
-                'dsn'            => $transportDNS,
-                'serializer'     => PhpSerializer::class,
-                'options'        => [
+                'dsn' => $transportDNS,
+                'serializer' => PhpSerializer::class,
+                'options' => [
                 ],
                 'retry_strategy' => [
                     'max_retries' => 3,
-                    'delay'       => 100,
-                    'multiplier'  => 2,
-                    'max_delay'   => 0,
+                    'delay' => 100,
+                    'multiplier' => 2,
+                    'max_delay' => 0,
                 ],
             ],
-            'messenger.transport.failed'        => [
-                'dsn'            => $transportDNS,
-                'serializer'     => PhpSerializer::class,
-                'options'        => [
+            'messenger.transport.failed' => [
+                'dsn' => $transportDNS,
+                'serializer' => PhpSerializer::class,
+                'options' => [
                 ],
                 'retry_strategy' => [
                     'max_retries' => 3,
-                    'delay'       => 1000,
-                    'multiplier'  => 2,
-                    'max_delay'   => 0,
+                    'delay' => 1000,
+                    'multiplier' => 2,
+                    'max_delay' => 0,
                 ],
             ],
         ];
@@ -173,14 +172,14 @@ class ConfigProvider
         return [
             'channel' => [
                 'email' => [
-                    'factory'   => EmailNotificationFactory::class,
+                    'factory' => EmailNotificationFactory::class,
                     'transport' => 'communication.channel.transport.email',
                 ],
             ],
             'context' => [
                 'email' => [
-                    'factory'        => EmailContextFactory::class,
-                    'data'           => [
+                    'factory' => EmailContextFactory::class,
+                    'data' => [
                     ],
                     'messageFactory' => EmailMessageFactory::class,
                 ],

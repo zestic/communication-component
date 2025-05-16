@@ -8,25 +8,42 @@
     "sort-packages": true
   },
   "require": {
-    "php": "^8.0",
+    "php": "^8.3",
     "iampersistent/config-value-component": "^1.2",
     "laminas/laminas-servicemanager": "^4.0.0-rc1",
     "mezzio/mezzio-twigrenderer": "^2.6",
     "netglue/laminas-messenger": "^2.0",
     "psr/container": "^1.0 || ^2.0",
-    "symfony/dependency-injection": "^5.3 || ^6.0 || ^7.0",
-    "symfony/event-dispatcher": "^5.3 || ^6.0 || ^7.0",
-    "symfony/messenger": "^5.3 || ^6.0 || ^7.0",
-    "symfony/mailer": "^5.3 || ^6.0 || ^7.0",
-    "symfony/notifier": "^5.3 || ^6.0 || ^7.0",
-    "symfony/property-access": "^5.3 || ^6.0 || ^7.0",
-    "symfony/serializer": "^5.3 || ^6.0 || ^7.0",
-    "symfony/twig-bridge": "^5.3 || ^6.0 || ^7.0",
+    "symfony/dependency-injection": "^6.4 || ^7.0",
+    "symfony/event-dispatcher": "^6.4 || ^7.0",
+    "symfony/messenger": "^6.4 || ^7.0",
+    "symfony/mailer": "^6.4 || ^7.0",
+    "symfony/notifier": "^6.4 || ^7.0",
+    "symfony/property-access": "^6.4 || ^7.0",
+    "symfony/serializer": "^6.4 || ^7.0",
+    "symfony/twig-bridge": "^6.4 || ^7.0",
     "twig/inky-extra": "^3.1",
     "twig/twig": "^3.0"
   },
   "require-dev": {
-    "symfony/amazon-mailer": "^5.3"
+    "symfony/amazon-mailer": "^6.4 || ^7.0",
+    "phpunit/phpunit": "^10.5",
+    "mockery/mockery": "^1.6",
+    "symfony/var-dumper": "^6.4 || ^7.0",
+    "phpstan/phpstan": "^1.10",
+    "friendsofphp/php-cs-fixer": "^3.49"
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test:coverage": "phpunit --coverage-html coverage",
+    "stan": "phpstan analyse -l max src tests",
+    "cs-check": "php-cs-fixer fix --dry-run --diff",
+    "cs-fix": "php-cs-fixer fix",
+    "check": [
+      "@cs-check",
+      "@stan",
+      "@test"
+    ]
   },
   "minimum-stability": "dev",
   "autoload": {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Locator;
@@ -24,7 +25,7 @@ class CommunicationBusLocator implements HandlersLocatorInterface
         $message = $envelope->getMessage();
         $type = $message::class;
         foreach ($this->handlers as $messageName => $handlers) {
-            if (! is_array($handlers)) {
+            if (!is_array($handlers)) {
                 throw new ConfigurationError(
                     'Expected an array of handler identifiers to retrieve from the container',
                 );

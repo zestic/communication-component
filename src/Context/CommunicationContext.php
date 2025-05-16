@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Context;
@@ -6,11 +7,11 @@ namespace Communication\Context;
 class CommunicationContext
 {
     /**
-     * @var CommunicationContextInterface[] $channelContexts
+     * @var CommunicationContextInterface[]
      */
     public function __construct(
         private array $channelContexts = [],
-    )  {
+    ) {
     }
 
     public function __call(string $method, $args): CommunicationContext

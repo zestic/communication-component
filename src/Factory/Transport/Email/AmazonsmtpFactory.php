@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Factory\Transport\Email;
@@ -20,7 +21,7 @@ final class AmazonsmtpFactory
 
     public function __invoke(ContainerInterface $container): SesSmtpTransport
     {
-        $config = (new GatherConfigValues)($container, $this->id);
+        $config = (new GatherConfigValues())($container, $this->id);
         $dispatcher = $container->get(EventDispatcherInterface::class);
         $logger = null;
 

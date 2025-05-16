@@ -21,7 +21,7 @@ class PostmarkFactory
 
     public function __invoke(ContainerInterface $container): TransportInterface
     {
-        $config = (new GatherConfigValues)($container, $this->id);
+        $config = (new GatherConfigValues())($container, $this->id);
         $dispatcher = $container->get(EventDispatcherInterface::class);
         $logger = isset($config['logger']) ? $container->get($config['logger']) : null;
         $host = $config['host'] ?? 'default';

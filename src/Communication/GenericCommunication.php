@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Communication\Communication;
@@ -30,7 +31,7 @@ final class GenericCommunication extends Communication
     {
         return [
             'email' => [
-                'html' => 'generic'
+                'html' => 'generic',
             ],
         ];
     }
