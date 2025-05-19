@@ -10,7 +10,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Message\MessageInterface;
 
-final class EmailContext implements CommunicationContextInterface
+class EmailContext implements CommunicationContextInterface
 {
     /** @var \Symfony\Component\Mime\Address[] */
     private array $bcc = [];
