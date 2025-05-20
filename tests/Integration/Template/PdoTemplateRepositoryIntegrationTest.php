@@ -22,10 +22,16 @@ class PdoTemplateRepositoryIntegrationTest extends TestCase
 
     protected function setUp(): void
     {
+        $host = getenv('DB_HOST') ?: 'localhost';
+        $dbname = getenv('DB_NAME') ?: 'communication_test';
+        $user = getenv('DB_USER') ?: 'postgres';
+        $password = getenv('DB_PASSWORD') ?: 'postgres';
+        $port = getenv('DB_PORT') ?: '5432';
+
         $this->pdo = new PDO(
-            'pgsql:host=localhost;dbname=test',
-            'test',
-            'password1',
+            "pgsql:host={$host};port={$port};dbname={$dbname}",
+            $user,
+            $password,
             [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

@@ -10,7 +10,7 @@ jobs:
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:14
@@ -25,10 +25,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -36,16 +36,37 @@ jobs:
           extensions: mbstring, intl, pdo, pdo_pgsql
           coverage: xdebug
           tools: composer:v2
-      
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
-      
+
       - name: Set up database schema
         run: |
-          # Create the database tables needed for tests
+          # Create the test database if it doesn't exist
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE test;" || echo "Database 'test' already exists"
+
+          # Create the database tables needed for tests in communication_test
           PGPASSWORD=postgres psql -h localhost -U postgres -d communication_test -c "$(cat migrations/V1__create_communication_definitions.sql)"
           PGPASSWORD=postgres psql -h localhost -U postgres -d communication_test -c "$(cat migrations/V2__create_templates.sql)"
-      
+
+          # Create the database tables needed for tests in test database
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "$(cat migrations/V1__create_communication_definitions.sql)"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "$(cat migrations/V2__create_templates.sql)"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "
+            CREATE TABLE IF NOT EXISTS communication_templates (
+                id VARCHAR(26) PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                channel VARCHAR(50) NOT NULL,
+                subject VARCHAR(255),
+                content TEXT NOT NULL,
+                content_type VARCHAR(50) NOT NULL DEFAULT 'text/html',
+                metadata JSONB,
+                created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                UNIQUE (name, channel)
+            )
+          "
+
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit
         env:
@@ -54,7 +75,12 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: communication_test
           POSTGRES_PORT: 5432
-      
+          DB_HOST: localhost
+          DB_NAME: communication_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_PORT: 5432
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
