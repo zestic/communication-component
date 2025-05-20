@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Communication;
 
 use Communication\Command\SendTestEmailCommand;
+use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
+use Communication\Definition\Repository\PostgresCommunicationDefinitionRepository;
 use Communication\Factory\BodyRendererFactory;
 use Communication\Factory\Channel\EmailChannelFactory;
-use Communication\Factory\CommunicationFactory;
 use Communication\Factory\Context\EmailContextFactory;
 use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\EventDispatcherFactory;
@@ -15,8 +16,12 @@ use Communication\Factory\Message\EmailMessageFactory;
 use Communication\Factory\MessageHandlerFactory;
 use Communication\Factory\Notification\EmailNotificationFactory;
 use Communication\Factory\NotifierFactory;
+use Communication\Factory\SendCommunicationFactory;
 use Communication\Factory\Transport\CommunicationTransportFactory;
+use Communication\Interactor\SendCommunication;
 use Communication\Locator\CommunicationBusLocator;
+use Communication\Template\PdoTemplateRepository;
+use Communication\Template\TemplateRepositoryInterface;
 use Mezzio\Twig\TwigEnvironmentFactory;
 use Mezzio\Twig\TwigExtension;
 use Mezzio\Twig\TwigExtensionFactory;
@@ -58,8 +63,9 @@ class ConfigProvider
     private function getDependencies(): array
     {
         return [
-            'abstract_factories' => [
-                CommunicationFactory::class,
+            'aliases' => [
+                CommunicationDefinitionRepositoryInterface::class => PostgresCommunicationDefinitionRepository::class,
+                TemplateRepositoryInterface::class => PdoTemplateRepository::class,
             ],
             'factories' => [
                 // bus config
@@ -94,13 +100,14 @@ class ConfigProvider
                     'messenger.transport.failed',
                 ],
                 CommunicationBusLocator::class =>
-                    new EmailBusLocatorFactory(
-                        'communication.bus.email'
-                    ),
+                new EmailBusLocatorFactory(
+                    'communication.bus.email'
+                ),
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
                 NotifierInterface::class => NotifierFactory::class,
                 BodyRenderer::class => BodyRendererFactory::class,
                 Environment::class => TwigEnvironmentFactory::class,
+                SendCommunication::class => SendCommunicationFactory::class,
                 TwigExtension::class => TwigExtensionFactory::class,
             ],
         ];
@@ -143,8 +150,7 @@ class ConfigProvider
             'communication.bus.transport.email' => [
                 'dsn' => $transportDNS,
                 'serializer' => PhpSerializer::class,
-                'options' => [
-                ],
+                'options' => [],
                 'retry_strategy' => [
                     'max_retries' => 3,
                     'delay' => 100,
@@ -155,8 +161,7 @@ class ConfigProvider
             'messenger.transport.failed' => [
                 'dsn' => $transportDNS,
                 'serializer' => PhpSerializer::class,
-                'options' => [
-                ],
+                'options' => [],
                 'retry_strategy' => [
                     'max_retries' => 3,
                     'delay' => 1000,
@@ -179,8 +184,7 @@ class ConfigProvider
             'context' => [
                 'email' => [
                     'factory' => EmailContextFactory::class,
-                    'data' => [
-                    ],
+                    'data' => [],
                     'messageFactory' => EmailMessageFactory::class,
                 ],
             ],

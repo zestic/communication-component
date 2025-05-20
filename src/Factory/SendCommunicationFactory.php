@@ -4,11 +4,38 @@ declare(strict_types=1);
 
 namespace Communication\Factory;
 
-use Communication\Context\CommunicationContext;
+use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
+use Communication\Interactor\SendCommunication;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Notifier\NotifierInterface;
 
-trait CommunicationFactoryTrait
+class SendCommunicationFactory
 {
+    public function __invoke(ContainerInterface $container): SendCommunication
+    {
+        $config = $container->get('config');
+
+        if (!is_array($config) || !isset($config['communication']) || !is_array($config['communication'])) {
+            throw new \RuntimeException('Invalid configuration: missing or invalid communication configuration');
+        }
+
+        $commConfig = $config['communication'];
+
+        if (!isset($commConfig['channel']) || !is_array($commConfig['channel'])) {
+            throw new \RuntimeException('Invalid configuration: missing or invalid communication.channel configuration');
+        }
+
+        if (!isset($commConfig['context']) || !is_array($commConfig['context'])) {
+            throw new \RuntimeException('Invalid configuration: missing or invalid communication.context configuration');
+        }
+
+        $definitionRepository = $container->get(CommunicationDefinitionRepositoryInterface::class);
+        $notificationFactories = $this->getNotificationFactories($container, $commConfig['channel']);
+        $notifier = $container->get(NotifierInterface::class);
+
+        return new SendCommunication($definitionRepository, $notificationFactories, $notifier);
+    }
+
     protected function getChannels(string $requestedName, array $config): array
     {
         $channelNames = array_keys($config['channel']) ?? ['email'];
