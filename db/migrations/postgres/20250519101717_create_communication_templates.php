@@ -36,21 +36,6 @@ final class CreateCommunicationTemplates extends AbstractMigration
 
         // Create trigger for updating updated_at column if it doesn't exist
         $this->execute("
-            -- Check if the function already exists
-            DO $$
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'update_updated_at_column') THEN
-                    CREATE OR REPLACE FUNCTION update_updated_at_column()
-                    RETURNS TRIGGER AS $$
-                    BEGIN
-                        NEW.updated_at = CURRENT_TIMESTAMP;
-                        RETURN NEW;
-                    END;
-                    $$ language 'plpgsql';
-                END IF;
-            END
-            $$;
-
             CREATE TRIGGER update_communication_templates_updated_at
                 BEFORE UPDATE ON communication_templates
                 FOR EACH ROW
