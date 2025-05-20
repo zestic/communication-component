@@ -10,15 +10,14 @@ use Symfony\Component\Mailer\Messenger\MessageHandler;
 
 final class MessageHandlerFactory implements FactoryInterface
 {
-    /** @var string */
-    private $transport;
+    private string $transport;
 
     public function __construct(string $transport)
     {
         $this->transport = $transport;
     }
 
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): mixed
+    public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): mixed
     {
         $transport = $container->get($this->transport);
 

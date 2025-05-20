@@ -187,6 +187,7 @@ class PdoTemplateRepository implements TemplateRepositoryInterface
         if (is_string($metadata)) {
             /** @var array<string, mixed> */
             $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+
             return $decoded;
         }
 

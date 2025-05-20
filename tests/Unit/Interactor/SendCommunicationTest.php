@@ -24,14 +24,23 @@ use Symfony\Component\Notifier\NotifierInterface;
 class SendCommunicationTest extends MockeryTestCase
 {
     private CommunicationDefinitionRepositoryInterface|MockInterface $definitionRepository;
+
     private array $notificationFactories;
+
     private NotifierInterface|MockInterface $notifier;
+
     private SendCommunication $sendCommunication;
+
     private CommunicationDefinition|MockInterface $definition;
+
     private EmailChannelDefinition|MockInterface $emailChannelDefinition;
+
     private CommunicationContextInterface|MockInterface $emailContext;
+
     private CommunicationContext|MockInterface $communicationContext;
+
     private Notification|MockInterface $notification;
+
     private MockInterface $notificationFactory;
 
     protected function setUp(): void

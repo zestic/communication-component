@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 class PostgresCommunicationDefinitionRepositoryTest extends TestCase
 {
     private PDO $pdo;
+
     private PostgresCommunicationDefinitionRepository $repository;
 
     protected function setUp(): void
@@ -23,8 +24,12 @@ class PostgresCommunicationDefinitionRepositoryTest extends TestCase
             getenv('POSTGRES_USER') ?: 'postgres',
             getenv('POSTGRES_PASSWORD') ?: 'postgres'
         );
-        
-        $this->pdo->exec(file_get_contents(__DIR__ . '/../../../../migrations/V1__create_communication_definitions.sql'));
+
+        $sqlContent = file_get_contents(__DIR__ . '/../../../../migrations/V1__create_communication_definitions.sql');
+        if ($sqlContent === false) {
+            throw new \RuntimeException('Failed to read SQL file');
+        }
+        $this->pdo->exec($sqlContent);
         $this->repository = new PostgresCommunicationDefinitionRepository($this->pdo);
     }
 
@@ -63,18 +68,18 @@ class PostgresCommunicationDefinitionRepositoryTest extends TestCase
 
         // Retrieve and verify
         $retrieved = $this->repository->findByIdentifier('test.notification');
-        
+
         $this->assertNotNull($retrieved);
         $this->assertEquals('test.notification', $retrieved->getIdentifier());
         $this->assertEquals('Test Notification', $retrieved->getName());
-        
+
         $retrievedEmailDef = $retrieved->getChannelDefinition('email');
         $this->assertNotNull($retrievedEmailDef);
         $this->assertInstanceOf(EmailChannelDefinition::class, $retrievedEmailDef);
         $this->assertEquals('email-template', $retrievedEmailDef->getTemplate());
         $this->assertEquals('from@example.com', $retrievedEmailDef->getFromAddress());
         $this->assertEquals('reply@example.com', $retrievedEmailDef->getReplyTo());
-        
+
         $retrievedMobileDef = $retrieved->getChannelDefinition('mobile');
         $this->assertNotNull($retrievedMobileDef);
         $this->assertInstanceOf(MobileChannelDefinition::class, $retrievedMobileDef);

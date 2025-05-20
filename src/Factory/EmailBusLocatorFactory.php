@@ -16,8 +16,12 @@ final class EmailBusLocatorFactory implements FactoryInterface
     ) {
     }
 
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): mixed
+    public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): mixed
     {
+        if ($this->busIdentifier === '') {
+            throw new \InvalidArgumentException('Bus identifier cannot be empty');
+        }
+
         $options = Util::messageBusOptions($container, $this->busIdentifier);
 
         return new CommunicationBusLocator($options->handlers(), $container);

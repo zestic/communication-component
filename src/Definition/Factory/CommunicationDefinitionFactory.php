@@ -23,15 +23,15 @@ class CommunicationDefinitionFactory
                     'trackingNumber' => ['type' => 'string'],
                     'deliveryDate' => ['type' => 'string', 'format' => 'date-time'],
                     'location' => ['type' => 'string'],
-                    'notes' => ['type' => 'string']
-                ]
+                    'notes' => ['type' => 'string'],
+                ],
             ],
             [
                 'type' => 'object',
                 'required' => ['trackingNumber'],
                 'properties' => [
-                    'trackingNumber' => ['type' => 'string']
-                ]
+                    'trackingNumber' => ['type' => 'string'],
+                ],
             ],
             'notifications@mailforwarding.example.com',
             'support@mailforwarding.example.com'
@@ -44,15 +44,15 @@ class CommunicationDefinitionFactory
                 'required' => ['trackingNumber', 'location'],
                 'properties' => [
                     'trackingNumber' => ['type' => 'string'],
-                    'location' => ['type' => 'string']
-                ]
+                    'location' => ['type' => 'string'],
+                ],
             ],
             [
                 'type' => 'object',
                 'required' => ['title'],
                 'properties' => [
-                    'title' => ['type' => 'string']
-                ]
+                    'title' => ['type' => 'string'],
+                ],
             ],
             1, // High priority
             false // No auth required
@@ -76,15 +76,15 @@ class CommunicationDefinitionFactory
                     'subscriptionId' => ['type' => 'string'],
                     'expiryDate' => ['type' => 'string', 'format' => 'date'],
                     'renewalAmount' => ['type' => 'number'],
-                    'discountCode' => ['type' => 'string']
-                ]
+                    'discountCode' => ['type' => 'string'],
+                ],
             ],
             [
                 'type' => 'object',
                 'required' => ['subscriptionId'],
                 'properties' => [
-                    'subscriptionId' => ['type' => 'string']
-                ]
+                    'subscriptionId' => ['type' => 'string'],
+                ],
             ],
             'billing@mailforwarding.example.com'
         );

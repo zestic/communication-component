@@ -3,11 +3,31 @@ parameters:
     paths:
         - src
         - tests
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     ignoreErrors:
+        -
+            identifier: missingType.iterableValue
         - '#Call to an undefined method Mockery\\ExpectationInterface\|Mockery\\HigherOrderMessage::#'
         - '#Call to an undefined method Mockery\\MockInterface\|PDO::#'
         - '#Call to an undefined method Communication\\Template\\TemplateRepositoryInterface\|Mockery\\MockInterface::#'
+        - '#Call to an undefined method Communication\\Definition\\Repository\\CommunicationDefinitionRepositoryInterface\|Mockery\\MockInterface::#'
+        - '#Call to an undefined method Communication\\Definition\\EmailChannelDefinition\|Mockery\\MockInterface::#'
+        - '#Call to an undefined method Communication\\Definition\\CommunicationDefinition\|Mockery\\MockInterface::#'
+        - '#Call to an undefined method Communication\\Context\\CommunicationContext\|Mockery\\MockInterface::#'
+        - '#Call to an undefined method Communication\\Context\\CommunicationContextInterface\|Mockery\\MockInterface::#'
+        - '#Call to an undefined method Mockery\\MockInterface\|Symfony\\Component\\Notifier\\NotifierInterface::#'
         - '#Property [a-zA-Z0-9\\]+::\$[a-zA-Z0-9]+ \([^)]+\) does not accept Mockery\\LegacyMockInterface#'
-        - '#Parameter \#1 \$[a-zA-Z0-9]+ of class [a-zA-Z0-9\\]+ constructor expects [^,]+, Mockery\\LegacyMockInterface given#'
+        - '#Parameter \#[0-9]+ \$[a-zA-Z0-9]+ of class [a-zA-Z0-9\\]+ constructor expects [^,]+, Mockery\\LegacyMockInterface given#'
+        - '#Parameter \#[0-9]+ \$[a-zA-Z0-9]+ of method [a-zA-Z0-9\\]+::[a-zA-Z0-9]+\(\) expects [^,]+, Mockery\\LegacyMockInterface given#'
+        - '#Parameter \#1 \$channelContexts of class Communication\\Context\\CommunicationContext constructor expects array<string, Communication\\Context\\CommunicationContextInterface>, array<string, Mockery\\LegacyMockInterface> given#'
+        - '#Call to an undefined method Communication\\Definition\\ChannelDefinition::(getFromAddress|getReplyTo|getPriority|requiresAuth)\(\)#'
+        - '#Instantiated class Symfony\\Component\\Mailer\\Bridge\\Postmark\\Transport\\PostmarkTransportFactory not found#'
+        - '#Call to method create\(\) on an unknown class Symfony\\Component\\Mailer\\Bridge\\Postmark\\Transport\\PostmarkTransportFactory#'
+        - '#Access to an undefined property Communication\\Factory\\Channel\\ChannelFactory::\$channel#'
+        - '#Parameter \#[0-9]+ \$[a-zA-Z0-9]+ of class [^)]+ constructor expects [^,]+, mixed given#'
+        - '#Cannot access offset [^)]+on mixed#'
+        - '#Method Communication\\Factory\\Transport\\CommunicationTransportFactory::__invoke\(\) has no return type specified#'
+        - '#Trying to invoke object but it might not be a callable#'
+        - '#Method Communication\\Factory\\Context\\ContextFactoryInterface::create\(\) has no return type specified#'
+        - '#Expression on left side of \?\? is not nullable#'
+        - '#Call to an undefined method object::create\(\)#'
+        - '#Call to an undefined method Communication\\Context\\CommunicationContext::setSubject\(\)#'

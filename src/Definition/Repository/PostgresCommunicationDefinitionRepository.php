@@ -31,16 +31,16 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
             LEFT JOIN channel_definitions chd ON cd.identifier = chd.communication_identifier
             WHERE cd.identifier = :identifier
         ');
-        
+
         $stmt->execute(['identifier' => $identifier]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         if (empty($rows)) {
             return null;
         }
 
         $definition = new CommunicationDefinition($identifier, $rows[0]['name']);
-        
+
         foreach ($rows as $row) {
             if ($row['channel'] === null) {
                 continue;
@@ -77,7 +77,7 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
     public function save(CommunicationDefinition $definition): void
     {
         $this->pdo->beginTransaction();
-        
+
         try {
             // Insert or update communication definition
             $stmt = $this->pdo->prepare('
@@ -86,10 +86,10 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
                 ON CONFLICT (identifier) 
                 DO UPDATE SET name = :name, updated_at = CURRENT_TIMESTAMP
             ');
-            
+
             $stmt->execute([
                 'identifier' => $definition->getIdentifier(),
-                'name' => $definition->getName()
+                'name' => $definition->getName(),
             ]);
 
             // Delete existing channel definitions
@@ -97,7 +97,7 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
                 DELETE FROM channel_definitions 
                 WHERE communication_identifier = :identifier
             ');
-            
+
             $stmt->execute(['identifier' => $definition->getIdentifier()]);
 
             // Insert new channel definitions
@@ -123,11 +123,11 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
                 $channelConfig = match(true) {
                     $channelDef instanceof EmailChannelDefinition => [
                         'from_address' => $channelDef->getFromAddress(),
-                        'reply_to' => $channelDef->getReplyTo()
+                        'reply_to' => $channelDef->getReplyTo(),
                     ],
                     $channelDef instanceof MobileChannelDefinition => [
                         'priority' => $channelDef->getPriority(),
-                        'requires_auth' => $channelDef->requiresAuth()
+                        'requires_auth' => $channelDef->requiresAuth(),
                     ],
                     default => throw new \RuntimeException('Unknown channel definition type: ' . get_class($channelDef))
                 };
@@ -145,6 +145,7 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
             $this->pdo->commit();
         } catch (\Throwable $e) {
             $this->pdo->rollBack();
+
             throw $e;
         }
     }

@@ -27,15 +27,15 @@ class CommunicationDefinitionExampleTest extends TestCase
                     'trackingNumber' => ['type' => 'string'],
                     'deliveryDate' => ['type' => 'string', 'format' => 'date-time'],
                     'location' => ['type' => 'string'],
-                    'notes' => ['type' => 'string']
-                ]
+                    'notes' => ['type' => 'string'],
+                ],
             ],
             [
                 'type' => 'object',
                 'required' => ['trackingNumber'],
                 'properties' => [
-                    'trackingNumber' => ['type' => 'string']
-                ]
+                    'trackingNumber' => ['type' => 'string'],
+                ],
             ],
             'notifications@mailforwarding.example.com',
             'support@mailforwarding.example.com'
@@ -49,15 +49,15 @@ class CommunicationDefinitionExampleTest extends TestCase
                 'required' => ['trackingNumber', 'location'],
                 'properties' => [
                     'trackingNumber' => ['type' => 'string'],
-                    'location' => ['type' => 'string']
-                ]
+                    'location' => ['type' => 'string'],
+                ],
             ],
             [
                 'type' => 'object',
                 'required' => ['title'],
                 'properties' => [
-                    'title' => ['type' => 'string']
-                ]
+                    'title' => ['type' => 'string'],
+                ],
             ],
             1, // High priority
             false // No auth required
@@ -71,7 +71,7 @@ class CommunicationDefinitionExampleTest extends TestCase
             'trackingNumber' => 'ABC123',
             'deliveryDate' => '2025-05-16T12:00:00Z',
             'location' => 'Locker #123',
-            'notes' => 'Large package'
+            'notes' => 'Large package',
         ];
         $emailDef->validateContext($validEmailContext);
 
@@ -82,7 +82,7 @@ class CommunicationDefinitionExampleTest extends TestCase
         // Test valid context for mobile
         $validMobileContext = [
             'trackingNumber' => 'ABC123',
-            'location' => 'Locker #123'
+            'location' => 'Locker #123',
         ];
         $mobileDef->validateContext($validMobileContext);
 
@@ -95,7 +95,7 @@ class CommunicationDefinitionExampleTest extends TestCase
         $invalidEmailContext = [
             'trackingNumber' => 'ABC123',
             // Missing required deliveryDate
-            'location' => 'Locker #123'
+            'location' => 'Locker #123',
         ];
         $emailDef->validateContext($invalidEmailContext);
     }

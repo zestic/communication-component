@@ -24,17 +24,17 @@ class EmailContext implements CommunicationContextInterface
 
     private ?Address $from = null;
 
-    private string $htmlTemplate = '';
+    private ?string $htmlTemplate = '';
 
     /** @var \Symfony\Component\Mime\Address[] */
-    private array $recipients;
+    private array $recipients = [];
 
     /** @var \Symfony\Component\Mime\Address[] */
     private array $replyTo = [];
 
     private string $subject = '';
 
-    private string $textTemplate = '';
+    private ?string $textTemplate = '';
 
     public function __construct(
         private MessageFactoryInterface $emailMessageFactory,
@@ -70,6 +70,9 @@ class EmailContext implements CommunicationContextInterface
         return $this;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function addBodyContext(string $name, $value): EmailContext
     {
         $this->bodyContext[$name] = $value;
@@ -106,6 +109,9 @@ class EmailContext implements CommunicationContextInterface
         return $this->from;
     }
 
+    /**
+     * @param mixed $from
+     */
     public function setFrom($from = null): EmailContext
     {
         if ($from) {
@@ -132,9 +138,18 @@ class EmailContext implements CommunicationContextInterface
         return $this->recipients;
     }
 
+    /**
+     * @param mixed $recipients
+     */
     public function setRecipients($recipients): EmailContext
     {
-        $this->recipients = $recipients;
+        if (is_array($recipients)) {
+            $processedRecipients = [];
+            foreach ($recipients as $recipient) {
+                $processedRecipients[] = $this->extractAddress($recipient);
+            }
+            $this->recipients = $processedRecipients;
+        }
 
         return $this;
     }
@@ -184,13 +199,24 @@ class EmailContext implements CommunicationContextInterface
         return $this;
     }
 
+    /**
+     * @param mixed $address
+     */
     private function extractAddress($address): Address
     {
         if ($address instanceof Recipient) {
             return new Address($address->getEmail(), $address->getName());
         }
 
-        return Address::create($address);
+        if ($address instanceof Address) {
+            return $address;
+        }
+
+        if (is_string($address)) {
+            return Address::create($address);
+        }
+
+        throw new \InvalidArgumentException('Invalid address type: ' . (is_object($address) ? get_class($address) : gettype($address)));
     }
 
     private function extractAddresses(array $addresses): array

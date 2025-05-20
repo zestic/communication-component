@@ -1,13 +1,17 @@
 .DS_STORE
 .idea/
-bin/
 composer.phar
 composer.lock
 tests/_support/_generated
 vendor/
 .phpunit.cache/
-/coverage/
 .phpunit.result.cache
+coverage/
+coverage.xml
+.env
+.php-cs-fixer.cache
 
+# VS Code
+.vscode/
 .history/
 .lh/

@@ -16,12 +16,16 @@ final class EmailNotification extends Notification implements EmailNotificationI
 
     public function __construct(EmailContext $emailContext, array $channels = [])
     {
-        $this->email = $emailContext->createMessage();
+        $message = $emailContext->createMessage();
+        if (!$message instanceof EmailMessage) {
+            throw new \RuntimeException('EmailContext::createMessage() must return an EmailMessage instance');
+        }
+        $this->email = $message;
 
         parent::__construct($emailContext->getSubject(), $channels);
     }
 
-    public function asEmailMessage(EmailRecipientInterface $recipient, string $transport = null): ?EmailMessage
+    public function asEmailMessage(EmailRecipientInterface $recipient, ?string $transport = null): ?EmailMessage
     {
         return $this->email;
     }

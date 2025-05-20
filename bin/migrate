@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+// Define valid commands
+$validCommands = [
+    'migrate', 'rollback', 'status', 'seed:run', 'seed', 'create', 'breakpoint',
+    'test', 'list', 'init'
+];
+
+// Parse arguments
+$args = $argv;
+array_shift($args); // Remove script name
+
+// Default values
+$command = 'migrate';
+$environment = 'development';
+$seedName = null;
+
+// Process arguments
+if (!empty($args)) {
+    // First argument could be a command or an environment
+    $firstArg = array_shift($args);
+
+    if (in_array($firstArg, $validCommands)) {
+        // It's a command
+        $command = $firstArg;
+    } else {
+        // It's an environment
+        $environment = $firstArg;
+
+        // Check if there's a command after the environment
+        if (!empty($args)) {
+            $command = array_shift($args);
+        }
+    }
+
+    // Check for seed name if command is seed:run
+    if (($command === 'seed:run' || $command === 'seed') && !empty($args)) {
+        $seedName = array_shift($args);
+    }
+}
+
+// Build the command
+$cmdParts = [
+    'vendor/bin/phinx',
+    $command,
+    '-e', $environment
+];
+
+// Add seed name if provided
+if ($seedName !== null && ($command === 'seed:run' || $command === 'seed')) {
+    $cmdParts[] = '-s';
+    $cmdParts[] = $seedName;
+}
+
+// Execute the Phinx command
+$cmd = implode(' ', $cmdParts);
+echo "Executing: $cmd\n";
+passthru($cmd);

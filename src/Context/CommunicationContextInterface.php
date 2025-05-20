@@ -9,6 +9,9 @@ use Symfony\Component\Notifier\Message\MessageInterface;
 
 interface CommunicationContextInterface
 {
+    /**
+     * @param mixed $value
+     */
     public function addBodyContext(string $name, $value): self;
 
     public function getBodyContext(): array;
@@ -17,11 +20,36 @@ interface CommunicationContextInterface
 
     public function getFrom(): ?Address;
 
-    public function setFrom($from);
+    /**
+     * @param mixed $from
+     */
+    public function setFrom($from): self;
 
+    /**
+     * @return array<mixed>
+     */
     public function getRecipients(): array;
 
-    public function setRecipients($recipients);
+    /**
+     * @param mixed $recipients
+     */
+    public function setRecipients($recipients): self;
 
     public function createMessage(): MessageInterface;
+
+    public function getSubject(): string;
+
+    public function getHtmlTemplate(): ?string;
+
+    public function getTextTemplate(): ?string;
+
+    /**
+     * @return array<Address>
+     */
+    public function getBcc(): array;
+
+    /**
+     * @return array<Address>
+     */
+    public function getReplyTo(): array;
 }

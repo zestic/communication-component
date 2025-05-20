@@ -262,3 +262,12 @@ For more information about the migrations, see the [db/README.md](db/README.md) 
 ### Future plans
 * Some refactoring to decrease complexity
 * Allow part of context to be overridden by the Recipient
+
+## Continuous Integration
+
+This project uses GitHub Actions for continuous integration:
+
+- **Lint Workflow**: Runs PHP-CS-Fixer and PHPStan to ensure code quality
+- **Tests Workflow**: Runs PHPUnit tests with PostgreSQL for integration tests
+
+The workflows are automatically triggered on push to the main branch and on pull requests.

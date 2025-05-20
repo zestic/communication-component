@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Communication\Definition;
 
-class EmailChannelDefinition extends AbstractChannelDefinition
+class EmailChannelDefinition extends AbstractChannelDefinition implements EmailChannelDefinitionInterface
 {
     public function __construct(
         string $template,
@@ -31,12 +31,14 @@ class EmailChannelDefinition extends AbstractChannelDefinition
     public function setFromAddress(string $fromAddress): self
     {
         $this->fromAddress = $fromAddress;
+
         return $this;
     }
 
     public function setReplyTo(?string $replyTo): self
     {
         $this->replyTo = $replyTo;
+
         return $this;
     }
 

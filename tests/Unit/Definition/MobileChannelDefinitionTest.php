@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Communication\Definition;
 
-use Communication\Definition\MobileChannelDefinition;
 use Communication\Definition\Exception\InvalidContextException;
 use Communication\Definition\Exception\InvalidSubjectException;
+use Communication\Definition\MobileChannelDefinition;
 use PHPUnit\Framework\TestCase;
 
 class MobileChannelDefinitionTest extends TestCase

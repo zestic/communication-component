@@ -13,9 +13,20 @@ final class NotifierFactory
     public function __invoke(ContainerInterface $container): NotifierInterface
     {
         $channels = [];
-        $channelList = $container->get('config')['communication']['channel'];
-        foreach ($channelList as $channel => $config) {
-            $channels[$channel] = $container->get($config['channel'] ?? "communication.channel.{$channel}");
+        $config = $container->get('config');
+
+        if (!is_array($config) || !isset($config['communication']['channel']) || !is_array($config['communication']['channel'])) {
+            throw new \RuntimeException('Invalid configuration: missing or invalid communication.channel configuration');
+        }
+
+        $channelList = $config['communication']['channel'];
+        foreach ($channelList as $channelName => $channelConfig) {
+            if (!is_array($channelConfig)) {
+                throw new \RuntimeException(sprintf('Invalid channel configuration for %s', $channelName));
+            }
+
+            $serviceId = $channelConfig['channel'] ?? "communication.channel.{$channelName}";
+            $channels[$channelName] = $container->get($serviceId);
         }
 
         return new Notifier($channels);

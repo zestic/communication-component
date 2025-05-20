@@ -34,14 +34,14 @@
     "mockery/mockery": "^1.6",
     "symfony/var-dumper": "^6.4 || ^7.0",
     "phpstan/phpstan": "^1.10",
-    "friendsofphp/php-cs-fixer": "^3.49"
+    "friendsofphp/php-cs-fixer": "^3.75"
   },
   "scripts": {
     "test": "phpunit",
     "test:coverage": "phpunit --coverage-html coverage",
     "stan": "phpstan analyse -l max src tests",
-    "cs-check": "php-cs-fixer fix --dry-run --diff",
-    "cs-fix": "php-cs-fixer fix",
+    "cs-check": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --dry-run --diff",
+    "cs-fix": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
     "check": [
       "@cs-check",
       "@stan",

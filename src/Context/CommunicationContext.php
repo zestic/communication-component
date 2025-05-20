@@ -7,14 +7,17 @@ namespace Communication\Context;
 class CommunicationContext
 {
     /**
-     * @var CommunicationContextInterface[]
+     * @param array<string, CommunicationContextInterface> $channelContexts
      */
     public function __construct(
         private array $channelContexts = [],
     ) {
     }
 
-    public function __call(string $method, $args): CommunicationContext
+    /**
+     * @param array<mixed> $args
+     */
+    public function __call(string $method, array $args): CommunicationContext
     {
         if (!str_starts_with($method, 'set')) {
             throw new \BadMethodCallException();
@@ -29,15 +32,21 @@ class CommunicationContext
         return $this;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function addToContext(string $name, $value): CommunicationContext
     {
-        foreach ($this->channelContexts as $channel => $context) {
-            $this->channelContexts[$channel]->addBodyContext($name, $value);
+        foreach ($this->channelContexts as $channelContext) {
+            $channelContext->addBodyContext($name, $value);
         }
 
         return $this;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function addEmailContext(string $name, $value): CommunicationContext
     {
         $this->channelContexts['email']->addBodyContext($name, $value);
@@ -45,20 +54,29 @@ class CommunicationContext
         return $this;
     }
 
-    public function getContext(string $name)
+    /**
+     * @return CommunicationContextInterface|null
+     */
+    public function getContext(string $name): ?CommunicationContextInterface
     {
-        return $this->channelContexts[$name];
+        return $this->channelContexts[$name] ?? null;
     }
 
-    public function setBodyContext($from): CommunicationContext
+    /**
+     * @param array<mixed> $bodyContext
+     */
+    public function setBodyContext(array $bodyContext): CommunicationContext
     {
         foreach ($this->channelContexts as $context) {
-            $context->setBodyContext($from);
+            $context->setBodyContext($bodyContext);
         }
 
         return $this;
     }
 
+    /**
+     * @param mixed $from
+     */
     public function setFrom($from): CommunicationContext
     {
         foreach ($this->channelContexts as $context) {
@@ -68,6 +86,9 @@ class CommunicationContext
         return $this;
     }
 
+    /**
+     * @param array<mixed> $recipients
+     */
     public function setRecipients(array $recipients): CommunicationContext
     {
         foreach ($this->channelContexts as $context) {

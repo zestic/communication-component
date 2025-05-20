@@ -12,7 +12,8 @@ class CommunicationDefinition
     public function __construct(
         private string $identifier,
         private string $name
-    ) {}
+    ) {
+    }
 
     public function addChannelDefinition(ChannelDefinition $definition): self
     {

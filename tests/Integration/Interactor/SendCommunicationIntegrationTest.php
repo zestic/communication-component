@@ -10,14 +10,12 @@ use Communication\Context\EmailContext;
 use Communication\Definition\CommunicationDefinition;
 use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
-
 use Communication\Interactor\SendCommunication;
 use Communication\Notification\EmailNotification;
 use Communication\Recipient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\NotifierInterface;
 
@@ -29,6 +27,7 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
     private CommunicationDefinitionRepositoryInterface|MockInterface $definitionRepository;
 
     private NotifierInterface|MockInterface $notifier;
+
     private SendCommunication $sendCommunication;
 
     protected function setUp(): void
@@ -37,8 +36,13 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
         $this->notifier = Mockery::mock(NotifierInterface::class);
 
         // Create a real notification factory
-        $notificationFactory = new class {
-            public function create($context, $channel)
+        $notificationFactory = new class () {
+            /**
+             * @param EmailContext $context
+             * @param string $channel
+             * @return EmailNotification
+             */
+            public function create(EmailContext $context, string $channel): EmailNotification
             {
                 return new EmailNotification($context, [$channel]);
             }
@@ -64,15 +68,15 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
                 'required' => ['message'],
                 'properties' => [
                     'message' => ['type' => 'string'],
-                    'name' => ['type' => 'string']
-                ]
+                    'name' => ['type' => 'string'],
+                ],
             ],
             [
                 'type' => 'object',
                 'required' => ['subject'],
                 'properties' => [
-                    'subject' => ['type' => 'string']
-                ]
+                    'subject' => ['type' => 'string'],
+                ],
             ],
             'notifications@example.com',
             'reply@example.com'
@@ -93,7 +97,7 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
         $emailContext->shouldReceive('getSubject')->andReturn('Test Subject');
         $emailContext->shouldReceive('getBodyContext')->andReturn([
             'message' => 'Hello, World!',
-            'name' => 'Test User'
+            'name' => 'Test User',
         ]);
         $emailContext->shouldReceive('setHtmlTemplate')->with('emails/test-notification.html.twig')->once();
         $emailContext->shouldReceive('setFrom')->with('notifications@example.com')->once();
@@ -137,15 +141,15 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
                 'type' => 'object',
                 'required' => ['message'],
                 'properties' => [
-                    'message' => ['type' => 'string']
-                ]
+                    'message' => ['type' => 'string'],
+                ],
             ],
             [
                 'type' => 'object',
                 'required' => ['subject'],
                 'properties' => [
-                    'subject' => ['type' => 'string']
-                ]
+                    'subject' => ['type' => 'string'],
+                ],
             ],
             'notifications@example.com'
         );
@@ -164,7 +168,7 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
         $emailContext = Mockery::mock(EmailContext::class);
         $emailContext->shouldReceive('getSubject')->andReturn('Test Subject');
         $emailContext->shouldReceive('getBodyContext')->andReturn([
-            'message' => 'Hello, World!'
+            'message' => 'Hello, World!',
         ]);
         $emailContext->shouldReceive('setHtmlTemplate')->with('emails/test-notification.html.twig')->once();
         $emailContext->shouldReceive('setFrom')->with('notifications@example.com')->once();

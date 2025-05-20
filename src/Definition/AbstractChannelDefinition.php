@@ -15,7 +15,8 @@ abstract class AbstractChannelDefinition implements ChannelDefinition
         protected string $template,
         protected array $contextSchema,
         protected array $subjectSchema
-    ) {}
+    ) {
+    }
 
     public function getChannel(): string
     {
@@ -40,8 +41,18 @@ abstract class AbstractChannelDefinition implements ChannelDefinition
     public function validateContext(array $context): void
     {
         $validator = new Validator();
-        $data = json_decode(json_encode($context));
-        $schema = json_decode(json_encode($this->contextSchema));
+        $contextData = json_encode($context);
+        if ($contextData === false) {
+            throw new \RuntimeException('Failed to encode context data to JSON');
+        }
+        $data = json_decode($contextData);
+
+        $schemaData = json_encode($this->contextSchema);
+        if ($schemaData === false) {
+            throw new \RuntimeException('Failed to encode context schema to JSON');
+        }
+        $schema = json_decode($schemaData);
+
         $validator->validate($data, $schema);
 
         if (!$validator->isValid()) {
@@ -52,8 +63,18 @@ abstract class AbstractChannelDefinition implements ChannelDefinition
     public function validateSubject(array $context): void
     {
         $validator = new Validator();
-        $data = json_decode(json_encode($context));
-        $schema = json_decode(json_encode($this->subjectSchema));
+        $contextData = json_encode($context);
+        if ($contextData === false) {
+            throw new \RuntimeException('Failed to encode subject data to JSON');
+        }
+        $data = json_decode($contextData);
+
+        $schemaData = json_encode($this->subjectSchema);
+        if ($schemaData === false) {
+            throw new \RuntimeException('Failed to encode subject schema to JSON');
+        }
+        $schema = json_decode($schemaData);
+
         $validator->validate($data, $schema);
 
         if (!$validator->isValid()) {

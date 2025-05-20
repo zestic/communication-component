@@ -14,9 +14,8 @@ class Communication
 
     public function __construct(
         private string $definitionId,
-        private ?CommunicationContext $context = null
+        private CommunicationContext $context = new CommunicationContext([])
     ) {
-        $this->context = $context ?? new CommunicationContext([]);
     }
 
     public function getDefinitionId(): string
@@ -26,9 +25,13 @@ class Communication
 
     public function getContext(): CommunicationContext
     {
+        // We initialize context in the constructor, so it's never null here
         return $this->context;
     }
 
+    /**
+     * @param Recipient|Recipient[] $recipients
+     */
     public function addRecipient($recipients): self
     {
         if (!is_array($recipients)) {
@@ -44,6 +47,9 @@ class Communication
         return $this;
     }
 
+    /**
+     * @return Recipient[]
+     */
     public function getRecipients(): array
     {
         return $this->recipients;

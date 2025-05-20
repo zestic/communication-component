@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class SendTestEmailCommand extends Command
 {
-    protected static $defaultName = 'communication:send-test-email';
+    protected static string $defaultName = 'communication:send-test-email';
 
     public function __construct(
         private SendCommunication $sender,
@@ -59,8 +59,19 @@ final class SendTestEmailCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $email = $input->getArgument('email');
+        if (!is_string($email)) {
+            throw new \InvalidArgumentException('Email must be a string');
+        }
+
         $subject = $input->getOption('subject');
+        if (!is_string($subject)) {
+            throw new \InvalidArgumentException('Subject must be a string');
+        }
+
         $body = $input->getOption('body');
+        if (!is_string($body)) {
+            throw new \InvalidArgumentException('Body must be a string');
+        }
 
         // Create a recipient
         $recipient = (new Recipient())
@@ -72,12 +83,13 @@ final class SendTestEmailCommand extends Command
             'body' => $body,
             'additionalData' => [
                 'timestamp' => date('Y-m-d H:i:s'),
-                'sender' => 'System'
-            ]
+                'sender' => 'System',
+            ],
         ]);
 
         // Set from address if provided
-        if ($from = $input->getOption('from')) {
+        $from = $input->getOption('from');
+        if (is_string($from) && $from !== '') {
             $this->emailContext->setFrom($from);
         }
 
