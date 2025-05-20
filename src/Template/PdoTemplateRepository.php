@@ -61,7 +61,6 @@ class PdoTemplateRepository implements TemplateRepositoryInterface
 
     public function save(TemplateInterface $template): void
     {
-        error_log('Driver: ' . $this->driver);
         $params = [
             'id' => $template->getId(),
             'name' => $template->getName(),
@@ -87,7 +86,6 @@ class PdoTemplateRepository implements TemplateRepositoryInterface
                 WHERE id = :id';
 
         $stmt = $this->pdo->prepare($sql);
-        error_log('Executing query with params: ' . print_r($params, true));
         foreach ($params as $key => $value) {
             $stmt->bindValue(':' . $key, $value);
         }
@@ -101,7 +99,6 @@ class PdoTemplateRepository implements TemplateRepositoryInterface
                     (:id, :name, :channel, :subject, :content, :content_type, :metadata, :created_at, :updated_at)';
 
             $stmt = $this->pdo->prepare($sql);
-            error_log('Executing query with params: ' . print_r($params, true));
             foreach ($params as $key => $value) {
                 $stmt->bindValue(':' . $key, $value);
             }
@@ -124,8 +121,6 @@ class PdoTemplateRepository implements TemplateRepositoryInterface
         if (!$data) {
             return null;
         }
-
-        error_log('Data received in hydrate: ' . print_r($data, true));
 
         /** @var string $id */
         $id = $data['id'];

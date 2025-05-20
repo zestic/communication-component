@@ -2,41 +2,44 @@
 
 declare(strict_types=1);
 
-namespace Communication;
+namespace Communication\Entity;
 
 use Communication\Context\CommunicationContext;
-use Communication\Entity\Communication as CommunicationEntity;
-use Communication\Interactor\SendCommunication;
 use Symfony\Component\Mime\Address;
 
-abstract class Communication
+class Communication
 {
-        /** @var Recipient[] */
+    /** @var Recipient[] */
     private array $recipients = [];
-    
-    public function __construct(
 
-        protected CommunicationContext $context,
-        private SendCommunication $sendCommunication,
+    public function __construct(
+        private string $definitionId,
+        private CommunicationContext $context = new CommunicationContext([])
     ) {
     }
 
     public function getDefinitionId(): string
     {
-        return $this->getTemplates()['email']['html'];
+        return $this->definitionId;
     }
 
     public function getContext(): CommunicationContext
     {
+        // We initialize context in the constructor, so it's never null here
         return $this->context;
     }
 
+    /**
+     * @param Recipient|Recipient[] $recipients
+     */
     public function addRecipient($recipients): self
     {
         if (!is_array($recipients)) {
             $recipients = [$recipients];
         }
+
         $this->context->setRecipients($recipients);
+
         foreach ($recipients as $recipient) {
             $this->recipients[] = $recipient;
         }
@@ -44,16 +47,18 @@ abstract class Communication
         return $this;
     }
 
-    public function send()
+    /**
+     * @return Recipient[]
+     */
+    public function getRecipients(): array
     {
-        $communication = new CommunicationEntity($this->getDefinitionId(), $this->context);
-        $this->sendCommunication->send($communication);
+        return $this->recipients;
     }
 
-    public function setFrom(Recipient|Address|string $address)
+    public function setFrom(Recipient|Address|string $address): self
     {
         $this->context->setFrom($address);
-    }
 
-    abstract protected function getTemplates(): array;
+        return $this;
+    }
 }

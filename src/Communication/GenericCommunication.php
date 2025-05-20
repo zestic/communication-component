@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Communication\Communication;
 
-use Communication\Communication;
+use Communication\Entity\Communication;
 use Communication\Interactor\SendCommunication;
 
 final class GenericCommunication extends Communication

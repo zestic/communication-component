@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Communication\Command;
 
-use Communication\Communication;
+use Communication\Entity\Communication;
 use Communication\Context\CommunicationContext;
 use Communication\Context\EmailContext;
 use Communication\Interactor\SendCommunication;

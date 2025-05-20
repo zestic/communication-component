@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Communication\Interactor;
 
-use Communication\Communication;
+use Communication\Entity\Communication;
 use Communication\Definition\CommunicationDefinition;
 use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
