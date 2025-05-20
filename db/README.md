@@ -24,11 +24,13 @@ You can run migrations using the provided script:
 # Run migrations in development environment (default)
 bin/migrate
 
+# Run a specific command (e.g., status, rollback)
+bin/migrate status
+bin/migrate rollback
+
 # Run migrations in a specific environment
 bin/migrate production
-
-# Run a specific command (e.g., rollback)
-bin/migrate development rollback
+bin/migrate production rollback
 ```
 
 ## Running Seeds
@@ -40,7 +42,11 @@ To seed the database with initial data:
 bin/migrate seed:run
 
 # Run a specific seed
-bin/migrate development seed:run GenericCommunicationSeed
+bin/migrate seed:run GenericCommunicationSeed
+
+# Run seeds in a specific environment
+bin/migrate production seed:run
+bin/migrate production seed:run GenericCommunicationSeed
 
 # Alternative using Phinx directly
 vendor/bin/phinx seed:run -e development
@@ -59,36 +65,34 @@ This will create a new migration file in the `db/migrations` directory.
 
 ## Configuration
 
-The Phinx configuration is in `phinx.php` in the root directory. You can modify this file to change database connection settings or other Phinx options.
+The Phinx configuration is in `phinx.yml` in the root directory. You can modify this file to change database connection settings or other Phinx options.
 
 ### Database Credentials
 
-Before running migrations, make sure to update the database credentials in `phinx.php`:
+Before running migrations, make sure to update the database credentials in `phinx.yml`:
 
-```php
-'development' => [
-    'adapter' => 'pgsql',
-    'host' => 'localhost',
-    'name' => 'communication_development',
-    'user' => 'your_postgres_username',
-    'pass' => 'your_postgres_password',
-    'port' => '5432',
-    'charset' => 'utf8',
-],
+```yaml
+development:
+    adapter: pgsql
+    host: localhost
+    name: communication_development
+    user: your_postgres_username
+    pass: your_postgres_password
+    port: 5432
+    charset: utf8
 ```
 
 You can also use environment variables for sensitive information:
 
-```php
-'development' => [
-    'adapter' => 'pgsql',
-    'host' => getenv('DB_HOST') ?: 'localhost',
-    'name' => getenv('DB_NAME') ?: 'communication_development',
-    'user' => getenv('DB_USER') ?: 'postgres',
-    'pass' => getenv('DB_PASSWORD') ?: 'postgres',
-    'port' => getenv('DB_PORT') ?: '5432',
-    'charset' => 'utf8',
-],
+```yaml
+development:
+    adapter: pgsql
+    host: '${DB_HOST:-localhost}'
+    name: '${DB_NAME:-communication_development}'
+    user: '${DB_USER:-postgres}'
+    pass: '${DB_PASSWORD:-postgres}'
+    port: '${DB_PORT:-5432}'
+    charset: utf8
 ```
 
 ## Available Environments

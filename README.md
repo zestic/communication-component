@@ -200,7 +200,7 @@ vendor/bin/laminas messenger:failed:remove {id}
 
 ## Database Migrations
 
-This component uses Phinx for database migrations. The migrations are located in the `db/migrations` directory.
+This component uses Phinx for database migrations with a YAML configuration file (`phinx.yml`). The migrations are located in the `db/migrations` directory.
 
 ### Running Migrations
 
@@ -210,11 +210,13 @@ You can run migrations using the provided script:
 # Run migrations in development environment (default)
 bin/migrate
 
+# Run a specific command (e.g., status, rollback)
+bin/migrate status
+bin/migrate rollback
+
 # Run migrations in a specific environment
 bin/migrate production
-
-# Run a specific command (e.g., rollback)
-bin/migrate development rollback
+bin/migrate production rollback
 ```
 
 ### Running Seeds
@@ -226,7 +228,11 @@ To seed the database with initial data:
 bin/migrate seed:run
 
 # Run a specific seed
-bin/migrate development seed:run GenericCommunicationSeed
+bin/migrate seed:run GenericCommunicationSeed
+
+# Run seeds in a specific environment
+bin/migrate production seed:run
+bin/migrate production seed:run GenericCommunicationSeed
 
 # Alternative using Phinx directly
 vendor/bin/phinx seed:run -e development
