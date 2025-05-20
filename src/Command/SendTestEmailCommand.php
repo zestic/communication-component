@@ -9,16 +9,20 @@ use Communication\Context\CommunicationContext;
 use Communication\Context\EmailContext;
 use Communication\Interactor\SendCommunication;
 use Communication\Recipient;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'communication:send-test-email',
+    description: 'Send a test email',
+    hidden: false,
+)]
 final class SendTestEmailCommand extends Command
 {
-    protected static string $defaultName = 'communication:send-test-email';
-
     public function __construct(
         private SendCommunication $sender,
         private EmailContext $emailContext,
