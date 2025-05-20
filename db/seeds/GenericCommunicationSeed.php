@@ -79,7 +79,7 @@ class GenericCommunicationSeed extends AbstractSeed
      */
     private function generateUlid(): string
     {
-        $time = (int)(microtime(true) * 1000);
+        $time = (string)(microtime(true) * 1000);
         $timestamp = str_pad(base_convert($time, 10, 32), 10, '0', STR_PAD_LEFT);
         $randomness = bin2hex(random_bytes(8));
 
@@ -106,16 +106,21 @@ class GenericCommunicationSeed extends AbstractSeed
 
     /**
      * Get the HTML template for the generic email
+     *
+     * This returns a Twig template that can handle the body variable and any additional data
      */
     private function getGenericEmailTemplate(): string
     {
-        return <<<HTML
+        return <<<TWIG
+{% block subject %}{{ subject }}{% endblock %}
+
+{% block body_html %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generic Email</title>
+    <title>{{ subject|default('Generic Email') }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -138,17 +143,59 @@ class GenericCommunicationSeed extends AbstractSeed
             color: #777;
             text-align: center;
         }
+        .additional-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
     <div class="content">
-        {{ body }}
+        {{ body|raw }}
+
+        {% if additionalData is defined and additionalData %}
+            <div class="additional-info">
+                {% if additionalData.timestamp is defined %}
+                    <p>Sent on: {{ additionalData.timestamp }}</p>
+                {% endif %}
+
+                {% if additionalData.sender is defined %}
+                    <p>From: {{ additionalData.sender }}</p>
+                {% endif %}
+
+                {# Loop through any other additional data #}
+                {% for key, value in additionalData %}
+                    {% if key != 'timestamp' and key != 'sender' %}
+                        <p>{{ key|title }}: {{ value }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
+
     <div class="footer">
         <p>This is an automated message. Please do not reply to this email.</p>
+        <p>© {{ "now"|date("Y") }} Your Company. All rights reserved.</p>
     </div>
 </body>
 </html>
-HTML;
+{% endblock %}
+
+{% block body_text %}
+{{ subject|default('Generic Email') }}
+
+{{ body|striptags }}
+
+{% if additionalData is defined and additionalData %}
+{% if additionalData.timestamp is defined %}Sent on: {{ additionalData.timestamp }}{% endif %}
+{% if additionalData.sender is defined %}From: {{ additionalData.sender }}{% endif %}
+{% endif %}
+
+This is an automated message. Please do not reply to this email.
+© {{ "now"|date("Y") }} Your Company. All rights reserved.
+{% endblock %}
+TWIG;
     }
 }
