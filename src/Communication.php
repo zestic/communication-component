@@ -11,15 +11,13 @@ use Symfony\Component\Mime\Address;
 
 abstract class Communication
 {
-        /** @var Recipient[] */
+    /** @var Recipient[] */
     private array $recipients = [];
-    
-    public function __construct(
 
+    public function __construct(
         protected CommunicationContext $context,
         private SendCommunication $sendCommunication,
-    ) {
-    }
+    ) {}
 
     public function getDefinitionId(): string
     {

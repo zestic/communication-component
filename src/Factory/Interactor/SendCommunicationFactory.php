@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory;
+namespace Communication\Factory\Interactor;
 
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
 use Communication\Interactor\SendCommunication;

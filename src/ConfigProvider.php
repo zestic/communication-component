@@ -8,6 +8,7 @@ use Communication\Command\SendTestEmailCommand;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
 use Communication\Definition\Repository\PostgresCommunicationDefinitionRepository;
 use Communication\Factory\BodyRendererFactory;
+use Communication\Factory\CommunicationFactory;
 use Communication\Factory\Channel\EmailChannelFactory;
 use Communication\Factory\Context\EmailContextFactory;
 use Communication\Factory\EmailBusLocatorFactory;
@@ -16,7 +17,7 @@ use Communication\Factory\Message\EmailMessageFactory;
 use Communication\Factory\MessageHandlerFactory;
 use Communication\Factory\Notification\EmailNotificationFactory;
 use Communication\Factory\NotifierFactory;
-use Communication\Factory\SendCommunicationFactory;
+use Communication\Factory\Interactor\SendCommunicationFactory;
 use Communication\Factory\Transport\CommunicationTransportFactory;
 use Communication\Interactor\SendCommunication;
 use Communication\Locator\CommunicationBusLocator;
@@ -63,6 +64,9 @@ class ConfigProvider
     private function getDependencies(): array
     {
         return [
+            'abstract_factories' => [
+                CommunicationFactory::class,
+            ],
             'aliases' => [
                 CommunicationDefinitionRepositoryInterface::class => PostgresCommunicationDefinitionRepository::class,
                 TemplateRepositoryInterface::class => PdoTemplateRepository::class,
