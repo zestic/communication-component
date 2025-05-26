@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Communication\Interactor;
 
 use Communication\Entity\Communication;
+use Communication\Entity\Recipient;
 use Communication\Definition\CommunicationDefinition;
 use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
-use Communication\Recipient;
 use Symfony\Component\Notifier\NotifierInterface;
 
 class SendCommunication
@@ -17,8 +17,7 @@ class SendCommunication
         private readonly CommunicationDefinitionRepositoryInterface $definitionRepository,
         private readonly array $notificationFactories,
         private readonly NotifierInterface $notifier,
-    ) {
-    }
+    ) {}
 
     public function send(Communication $communication): void
     {
