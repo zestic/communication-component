@@ -9,14 +9,14 @@ use Communication\Context\CommunicationContextInterface;
 use Communication\Context\EmailContext;
 use Communication\Entity\Communication;
 use Communication\Entity\CommunicationSettings;
+use Communication\Factory\Context\ChannelContextFactory;
 
 class CommunicationFactory
 {
     public function __construct(
         private ChannelContextFactory $channelContextFactory,
         private CommunicationSettings $settings,
-    ) {
-    }
+    ) {}
 
     public function create(array $data): Communication
     {
@@ -57,5 +57,5 @@ class CommunicationFactory
     private function getRecipients(array $data): array
     {
         return $data['recipients'] ?? [];
-    }   
+    }
 }

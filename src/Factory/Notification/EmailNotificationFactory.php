@@ -6,20 +6,20 @@ namespace Communication\Factory\Notification;
 
 use Communication\Context\CommunicationContextInterface;
 use Communication\Context\EmailContext;
+use Communication\Factory\Message\EmailMessageFactory;
 use Communication\Notification\EmailNotification;
 use Symfony\Component\Notifier\Notification\Notification;
 
 final class EmailNotificationFactory implements NotificationFactoryInterface
 {
-    public function create(CommunicationContextInterface $emailContext, string $channel): Notification
-    {
-        if (!$emailContext instanceof EmailContext) {
-            throw new \InvalidArgumentException(sprintf(
-                'EmailNotificationFactory requires an EmailContext, got %s',
-                get_class($emailContext)
-            ));
-        }
+    public function __construct(
+        private readonly EmailMessageFactory $emailMessageFactory,
+    ) {}
 
-        return new EmailNotification($emailContext, [$channel]);
+    public function create(EmailContext|CommunicationContextInterface $emailContext): Notification
+    {
+        $emailMessage = $this->emailMessageFactory->createMessage($emailContext);
+
+        return new EmailNotification($emailMessage);
     }
 }

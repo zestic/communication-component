@@ -9,5 +9,5 @@ use Symfony\Component\Notifier\Notification\Notification;
 
 interface NotificationFactoryInterface
 {
-    public function create(CommunicationContextInterface $emailContext, string $channel): Notification;
+    public function create(CommunicationContextInterface $emailContext): Notification;
 }

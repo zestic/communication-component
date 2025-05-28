@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Communication\Command;
 
 use Communication\Entity\Communication;
+use Communication\Entity\Recipient;
 use Communication\Context\CommunicationContext;
 use Communication\Context\EmailContext;
 use Communication\Interactor\SendCommunication;
-use Communication\Recipient;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Communication;
 
+use Communication\Application\Factory\ChannelContextFactoryFactory;
 use Communication\Command\SendTestEmailCommand;
+use Communication\Context\EmailContext;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
 use Communication\Definition\Repository\PostgresCommunicationDefinitionRepository;
 use Communication\Factory\BodyRendererFactory;
 use Communication\Factory\Legacy\CommunicationFactory;
 use Communication\Factory\Channel\EmailChannelFactory;
-use Communication\Factory\Context\EmailContextFactory;
+use Communication\Factory\Context\ChannelContextFactory;
 use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\EventDispatcherFactory;
-use Communication\Factory\Message\EmailMessageFactory;
 use Communication\Factory\MessageHandlerFactory;
 use Communication\Factory\Notification\EmailNotificationFactory;
 use Communication\Factory\NotifierFactory;
@@ -107,6 +108,7 @@ class ConfigProvider
                 new EmailBusLocatorFactory(
                     'communication.bus.email'
                 ),
+                ChannelContextFactory::class => ChannelContextFactoryFactory::class,
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
                 NotifierInterface::class => NotifierFactory::class,
                 BodyRenderer::class => BodyRendererFactory::class,
@@ -185,12 +187,8 @@ class ConfigProvider
                     'transport' => 'communication.channel.transport.email',
                 ],
             ],
-            'context' => [
-                'email' => [
-                    'factory' => EmailContextFactory::class,
-                    'data' => [],
-                    'messageFactory' => EmailMessageFactory::class,
-                ],
+            'channelContexts' => [
+                'email' => EmailContext::class,
             ],
         ];
     }

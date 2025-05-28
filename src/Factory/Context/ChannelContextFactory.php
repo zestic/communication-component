@@ -5,23 +5,20 @@ declare(strict_types=1);
 namespace Communication\Factory\Context;
 
 use Communication\Context\CommunicationContextInterface;
-use Psr\Container\ContainerInterface;
 
 class ChannelContextFactory
 {
     public function __construct(
-        private array $factories,
-    ) {
-    }
+        private array $channelContexts,
+    ) {}
 
     public function create(string $channel): CommunicationContextInterface
     {
-        if (!isset($this->factories[$channel])) {
+        if (!isset($this->channelContexts[$channel])) {
             throw new \RuntimeException("Unknown channel: $channel");
         }
-        $factory = $this->factories[$channel];
-        $factory = $this->container->get("communication.context.{$channel}");
+        $context = $this->channelContexts[$channel];
 
-        return $factory->create($this->container, []);
+        return new $context();
     }
 }

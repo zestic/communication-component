@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Communication\Context;
 
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Notifier\Message\MessageInterface;
 
 interface CommunicationContextInterface
 {
@@ -34,8 +33,6 @@ interface CommunicationContextInterface
      * @param mixed $recipients
      */
     public function setRecipients($recipients): self;
-
-    public function createMessage(): MessageInterface;
 
     public function getSubject(): string;
 

@@ -9,18 +9,27 @@ use Communication\Entity\Recipient;
 use Communication\Definition\CommunicationDefinition;
 use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
+use Communication\Factory\CommunicationFactory;
+use Communication\Factory\Notification\NotificationFactoryInterface;
 use Symfony\Component\Notifier\NotifierInterface;
 
 class SendCommunication
 {
+    /** @var array<string, NotificationFactoryInterface> */
+
     public function __construct(
         private readonly CommunicationDefinitionRepositoryInterface $definitionRepository,
         private readonly array $notificationFactories,
         private readonly NotifierInterface $notifier,
+        private readonly CommunicationFactory $communicationFactory,
     ) {}
 
-    public function send(Communication $communication): void
+    public function send(Communication|array $communication): void
     {
+        if (is_array($comunication)) {
+            $communication = $this->communicationFactory->create($communication);
+        }
+
         // Get the communication definition
         $definition = $this->definitionRepository->findByIdentifier($communication->getDefinitionId());
         if (!$definition) {
@@ -117,22 +126,15 @@ class SendCommunication
 
     private function sendToRecipient(Recipient $recipient, Communication $communication, CommunicationDefinition $definition): void
     {
-        $context = $communication->getContext();
-
+        xdebug_break();
         foreach ($recipient->getChannels() as $channel) {
-            $channelDefinition = $definition->getChannelDefinition($channel);
-            if (!$channelDefinition) {
-                continue;
-            }
-
-            // Create notification
-            $factory = $this->notificationFactories[$channel];
-            $channelContext = $context->getContext($channel);
+            /** @var NotificationFactoryInterface $notificationFactory */
+            $notificationFactory = $this->notificationFactories[$channel];
+            $channelContext = $communication->getChannelContext($channel);
             if (!$channelContext) {
                 continue;
             }
-
-            $notification = $factory->create($channelContext, $channel);
+            $notification = $notificationFactory->create($channelContext, $channel);
 
             // Send notification
             $this->notifier->send($notification, $recipient);

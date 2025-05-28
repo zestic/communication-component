@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Communication\Entity;
 
 use Communication\Context\CommunicationContext;
+use Communication\Context\CommunicationContextInterface;
 use Symfony\Component\Mime\Address;
 
 class Communication
@@ -15,8 +16,7 @@ class Communication
     public function __construct(
         private string $definitionId,
         private CommunicationContext $context = new CommunicationContext([])
-    ) {
-    }
+    ) {}
 
     public function getDefinitionId(): string
     {
@@ -27,6 +27,11 @@ class Communication
     {
         // We initialize context in the constructor, so it's never null here
         return $this->context;
+    }
+
+    public function getChannelContext(string $channel): ?CommunicationContextInterface
+    {
+        return $this->context->getContext($channel);
     }
 
     /**
