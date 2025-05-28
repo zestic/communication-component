@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory;
+namespace Communication\Factory\Legacy;
 
 use Communication\Context\CommunicationContext;
 use Psr\Container\ContainerInterface;

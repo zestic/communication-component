@@ -4,28 +4,58 @@ declare(strict_types=1);
 
 namespace Communication\Factory;
 
-use Communication\Communication;
-use Communication\Interactor\SendCommunication;
-use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
-use Psr\Container\ContainerInterface;
+use Communication\Context\CommunicationContext;
+use Communication\Context\CommunicationContextInterface;
+use Communication\Context\EmailContext;
+use Communication\Entity\Communication;
+use Communication\Entity\CommunicationSettings;
 
-class CommunicationFactory implements AbstractFactoryInterface
+class CommunicationFactory
 {
-    use CommunicationFactoryTrait;
-
-    public function canCreate(ContainerInterface $container, $requestedName): bool
-    {
-        return (is_a($requestedName, Communication::class, true));
+    public function __construct(
+        private ChannelContextFactory $channelContextFactory,
+        private CommunicationSettings $settings,
+    ) {
     }
 
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): mixed
+    public function create(array $data): Communication
     {
-        $config = $container->get('config')['communication'];
-        $context = $this->getContext($container, $config['context']);
+        $context = $this->createContext($data);
 
-        return new $requestedName(
-            $context,
-            $container->get(SendCommunication::class),
-        );
+        return new Communication($data['definitionId'], $context);
     }
+
+    private function createContext(array $data): CommunicationContext
+    {
+        $channelContexts = $this->getChannelContexts($data);
+        $context = new CommunicationContext($channelContexts);
+        $recipients = $this->getRecipients($data);
+        $context->setFrom($this->settings->getFromAddress());
+        $context->setRecipients($recipients);
+
+        return $context;
+    }
+
+    private function getChannelContexts(array $data): array
+    {
+        $channelContexts = [];
+        foreach ($data['channels'] as $channel) {
+            $channelContexts[$channel] = $this->channelContextFactory->create($channel);
+        }
+
+        return $channelContexts;
+    }
+
+    private function createChannelContext(string $channel, array $data): CommunicationContextInterface
+    {
+        return match ($channel) {
+            'email' => new EmailContext(),
+            default => throw new \RuntimeException("Unknown channel: $channel")
+        };
+    }
+
+    private function getRecipients(array $data): array
+    {
+        return $data['recipients'] ?? [];
+    }   
 }

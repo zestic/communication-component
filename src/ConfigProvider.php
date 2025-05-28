@@ -8,7 +8,7 @@ use Communication\Command\SendTestEmailCommand;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
 use Communication\Definition\Repository\PostgresCommunicationDefinitionRepository;
 use Communication\Factory\BodyRendererFactory;
-use Communication\Factory\CommunicationFactory;
+use Communication\Factory\Legacy\CommunicationFactory;
 use Communication\Factory\Channel\EmailChannelFactory;
 use Communication\Factory\Context\EmailContextFactory;
 use Communication\Factory\EmailBusLocatorFactory;
