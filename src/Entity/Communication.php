@@ -16,7 +16,8 @@ class Communication
     public function __construct(
         private string $definitionId,
         private CommunicationContext $context = new CommunicationContext([])
-    ) {}
+    ) {
+    }
 
     public function getDefinitionId(): string
     {

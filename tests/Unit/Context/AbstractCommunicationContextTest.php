@@ -39,7 +39,7 @@ class AbstractCommunicationContextTest extends TestCase
         $this->context->addBodyContext('email', 'john@example.com');
         $this->assertSame([
             'name' => 'John Doe',
-            'email' => 'john@example.com'
+            'email' => 'john@example.com',
         ], $this->context->getBodyContext());
 
         // Test setting entire context array
@@ -118,7 +118,7 @@ class AbstractCommunicationContextTest extends TestCase
         // Test setting recipients from array of Address objects
         $addressObjects = [
             new Address('addr1@example.com', 'Name 1'),
-            new Address('addr2@example.com', 'Name 2')
+            new Address('addr2@example.com', 'Name 2'),
         ];
         $this->context->setRecipients($addressObjects);
         $this->assertSame($addressObjects, $this->context->getRecipients());
@@ -131,7 +131,7 @@ class AbstractCommunicationContextTest extends TestCase
             'string@example.com',
             new Address('address@example.com', 'Address Name'),
             ['email' => 'array@example.com', 'name' => 'Array Name'],
-            $recipient
+            $recipient,
         ];
         $this->context->setRecipients($mixedRecipients);
         $recipientAddresses = $this->context->getRecipients();

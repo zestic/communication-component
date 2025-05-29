@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Communication\Interactor;
 
-use Communication\Entity\Communication;
-use Communication\Entity\Recipient;
 use Communication\Definition\CommunicationDefinition;
 use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
+use Communication\Entity\Communication;
+use Communication\Entity\Recipient;
 use Communication\Factory\CommunicationFactory;
 use Communication\Factory\Notification\NotificationFactoryInterface;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -16,17 +16,17 @@ use Symfony\Component\Notifier\NotifierInterface;
 class SendCommunication
 {
     /** @var array<string, NotificationFactoryInterface> */
-
     public function __construct(
         private readonly CommunicationDefinitionRepositoryInterface $definitionRepository,
         private readonly array $notificationFactories,
         private readonly NotifierInterface $notifier,
         private readonly CommunicationFactory $communicationFactory,
-    ) {}
+    ) {
+    }
 
     public function send(Communication|array $communication): void
     {
-        if (is_array($comunication)) {
+        if (is_array($communication)) {
             $communication = $this->communicationFactory->create($communication);
         }
 

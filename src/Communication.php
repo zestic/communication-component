@@ -17,7 +17,8 @@ abstract class Communication
     public function __construct(
         protected CommunicationContext $context,
         private SendCommunication $sendCommunication,
-    ) {}
+    ) {
+    }
 
     public function getDefinitionId(): string
     {

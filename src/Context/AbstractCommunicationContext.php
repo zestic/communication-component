@@ -190,6 +190,7 @@ abstract class AbstractCommunicationContext implements CommunicationContextInter
                 if ($phone) {
                     // Convert phone number to email-like format for Address compatibility
                     $emailLikePhone = $this->phoneToEmailFormat($phone);
+
                     return new Address($emailLikePhone, $address->getName());
                 }
             } catch (\Error) {
@@ -222,6 +223,7 @@ abstract class AbstractCommunicationContext implements CommunicationContextInter
         // Remove non-alphanumeric characters and convert to email-like format
         $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
         $cleanPhone = str_replace('+', 'plus', $cleanPhone);
+
         return $cleanPhone . '@sms.internal';
     }
 

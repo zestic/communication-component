@@ -14,7 +14,8 @@ final class EmailNotificationFactory implements NotificationFactoryInterface
 {
     public function __construct(
         private readonly EmailMessageFactory $emailMessageFactory,
-    ) {}
+    ) {
+    }
 
     public function create(EmailContext|CommunicationContextInterface $emailContext): Notification
     {

@@ -68,7 +68,7 @@ class EmailContextTest extends TestCase
         // Test setting CC addresses from Address objects
         $addressObjects = [
             new Address('addr1@example.com', 'CC Name 1'),
-            new Address('addr2@example.com', 'CC Name 2')
+            new Address('addr2@example.com', 'CC Name 2'),
         ];
         $this->context->setCc($addressObjects);
         $cc = $this->context->getCc();
@@ -86,7 +86,7 @@ class EmailContextTest extends TestCase
             'string@example.com',
             new Address('address@example.com', 'Address Name'),
             ['email' => 'array@example.com', 'name' => 'Array Name'],
-            $recipient
+            $recipient,
         ];
         $this->context->setCc($mixedCc);
         $cc = $this->context->getCc();
@@ -117,7 +117,7 @@ class EmailContextTest extends TestCase
         $recipients = [
             'user1@example.com',
             new Address('user2@example.com', 'User 2'),
-            ['email' => 'user3@example.com', 'name' => 'User 3']
+            ['email' => 'user3@example.com', 'name' => 'User 3'],
         ];
         $this->context->setRecipients($recipients);
 
@@ -141,7 +141,7 @@ class EmailContextTest extends TestCase
         $this->context->addBodyContext('email', 'john@example.com');
         $this->assertSame([
             'name' => 'John Doe',
-            'email' => 'john@example.com'
+            'email' => 'john@example.com',
         ], $this->context->getBodyContext());
 
         // Test from address functionality
@@ -202,7 +202,7 @@ class EmailContextTest extends TestCase
             ->setFrom(['email' => 'sender@company.com', 'name' => 'Company Name'])
             ->setRecipients([
                 'user1@example.com',
-                ['email' => 'user2@example.com', 'name' => 'User Two']
+                ['email' => 'user2@example.com', 'name' => 'User Two'],
             ])
             ->setCc(['manager@company.com'])
             ->setBcc(['audit@company.com'])
@@ -213,7 +213,7 @@ class EmailContextTest extends TestCase
             ->setTextTemplate('welcome_email_text')
             ->setBodyContext([
                 'userName' => 'John Doe',
-                'activationLink' => 'https://example.com/activate/123'
+                'activationLink' => 'https://example.com/activate/123',
             ]);
 
         // Verify all properties are set correctly
@@ -245,7 +245,7 @@ class EmailContextTest extends TestCase
 
         $expectedContext = [
             'userName' => 'John Doe',
-            'activationLink' => 'https://example.com/activate/123'
+            'activationLink' => 'https://example.com/activate/123',
         ];
         $this->assertSame($expectedContext, $this->context->getBodyContext());
     }

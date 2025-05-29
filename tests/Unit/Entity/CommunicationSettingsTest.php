@@ -70,7 +70,7 @@ class CommunicationSettingsTest extends TestCase
     {
         $addressData = [
             'email' => 'array@example.com',
-            'name' => 'Array User'
+            'name' => 'Array User',
         ];
 
         $result = $this->settings->setFromAddress($addressData);
@@ -170,7 +170,7 @@ class CommunicationSettingsTest extends TestCase
             'email' => 'extra@example.com',
             'name' => 'Extra User',
             'extra' => 'ignored',
-            'another' => 'also ignored'
+            'another' => 'also ignored',
         ];
 
         $result = $this->settings->setFromAddress($addressData);
@@ -189,7 +189,7 @@ class CommunicationSettingsTest extends TestCase
     {
         $addressData = [
             'email' => 'emptyname@example.com',
-            'name' => ''
+            'name' => '',
         ];
 
         $result = $this->settings->setFromAddress($addressData);

@@ -37,7 +37,7 @@ class SmsContextTest extends TestCase
         $this->context->addBodyContext('message', 'Your verification code is 123456');
         $this->assertSame([
             'phoneNumber' => '+1234567890',
-            'message' => 'Your verification code is 123456'
+            'message' => 'Your verification code is 123456',
         ], $this->context->getBodyContext());
 
         // Test setting entire context array
@@ -116,7 +116,7 @@ class SmsContextTest extends TestCase
             'user3@sms.example.com',
             new Address('user4@sms.example.com', 'User Name'),
             ['email' => 'user5@sms.example.com', 'name' => 'Contact Name'],
-            $smsRecipient
+            $smsRecipient,
         ];
         $this->context->setRecipients($mixedRecipients);
         $recipientAddresses = $this->context->getRecipients();
@@ -235,7 +235,7 @@ class SmsContextTest extends TestCase
         $this->assertSame('alert_sms', $this->context->getTextTemplate());
         $this->assertSame([
             'alertType' => 'security',
-            'timestamp' => '2025-01-01 12:00:00'
+            'timestamp' => '2025-01-01 12:00:00',
         ], $this->context->getBodyContext());
     }
 
@@ -248,7 +248,7 @@ class SmsContextTest extends TestCase
             ->setFrom(['email' => 'security@sms.example.com', 'name' => 'Security Service'])
             ->setRecipients([
                 'user1@sms.example.com',
-                ['email' => 'user2@sms.example.com', 'name' => 'John Doe']
+                ['email' => 'user2@sms.example.com', 'name' => 'John Doe'],
             ])
             ->setSubject('Security Alert')
             ->setTextTemplate('security_alert_sms')
@@ -256,7 +256,7 @@ class SmsContextTest extends TestCase
                 'alertType' => 'login_attempt',
                 'location' => 'New York, NY',
                 'timestamp' => '2025-01-01 12:00:00',
-                'actionRequired' => true
+                'actionRequired' => true,
             ]);
 
         // Verify all properties are set correctly
@@ -276,7 +276,7 @@ class SmsContextTest extends TestCase
             'alertType' => 'login_attempt',
             'location' => 'New York, NY',
             'timestamp' => '2025-01-01 12:00:00',
-            'actionRequired' => true
+            'actionRequired' => true,
         ];
         $this->assertSame($expectedContext, $this->context->getBodyContext());
     }
@@ -309,7 +309,7 @@ class SmsContextTest extends TestCase
         $expectedContext = [
             'code' => '123456',
             'expiryMinutes' => 5,
-            'serviceName' => 'MyApp'
+            'serviceName' => 'MyApp',
         ];
         $this->assertSame($expectedContext, $this->context->getBodyContext());
     }

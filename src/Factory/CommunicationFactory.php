@@ -16,7 +16,8 @@ class CommunicationFactory
     public function __construct(
         private ChannelContextFactory $channelContextFactory,
         private CommunicationSettings $settings,
-    ) {}
+    ) {
+    }
 
     public function create(array $data): Communication
     {
@@ -82,6 +83,7 @@ class CommunicationFactory
             if (is_array($data['from'])) {
                 $email = $data['from']['email'] ?? throw new \InvalidArgumentException('From array must contain "email" key');
                 $name = $data['from']['name'] ?? '';
+
                 return new Address($email, $name);
             }
 
@@ -129,5 +131,4 @@ class CommunicationFactory
             }
         }
     }
-
 }

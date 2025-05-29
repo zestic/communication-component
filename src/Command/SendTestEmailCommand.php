@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Communication\Command;
 
-use Communication\Entity\Communication;
-use Communication\Entity\Recipient;
 use Communication\Context\CommunicationContext;
 use Communication\Context\EmailContext;
+use Communication\Entity\Communication;
+use Communication\Entity\Recipient;
 use Communication\Interactor\SendCommunication;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

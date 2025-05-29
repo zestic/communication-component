@@ -19,7 +19,9 @@ use Symfony\Component\Mime\Address;
 class CommunicationFactoryTest extends TestCase
 {
     private CommunicationFactory $factory;
+
     private CommunicationSettings $settings;
+
     private ChannelContextFactory $channelContextFactory;
 
     protected function setUp(): void
@@ -437,7 +439,7 @@ class CommunicationFactoryTest extends TestCase
         $data = [
             'channels' => [
                 'email',
-                'sms'
+                'sms',
             ],
             'definitionId' => 'auth.email-verification',
             'from' => [

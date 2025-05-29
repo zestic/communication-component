@@ -10,7 +10,8 @@ class ChannelContextFactory
 {
     public function __construct(
         private array $channelContexts,
-    ) {}
+    ) {
+    }
 
     public function create(string $channel): CommunicationContextInterface
     {
