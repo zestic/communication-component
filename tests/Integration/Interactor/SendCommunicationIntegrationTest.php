@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Communication\Interactor;
 
-use Communication\Communication;
 use Communication\Context\CommunicationContext;
 use Communication\Context\EmailContext;
+use Communication\Context\SmsContext;
 use Communication\Definition\CommunicationDefinition;
 use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
+use Communication\Entity\Communication;
+use Communication\Entity\CommunicationSettings;
+use Communication\Entity\Recipient;
+use Communication\Factory\CommunicationFactory;
+use Communication\Factory\Context\ChannelContextFactory;
 use Communication\Interactor\SendCommunication;
 use Communication\Notification\EmailNotification;
-use Communication\Recipient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\NotifierInterface;
 
@@ -28,12 +33,29 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
 
     private NotifierInterface|MockInterface $notifier;
 
+    private CommunicationFactory $communicationFactory;
+
     private SendCommunication $sendCommunication;
 
     protected function setUp(): void
     {
         $this->definitionRepository = Mockery::mock(CommunicationDefinitionRepositoryInterface::class);
         $this->notifier = Mockery::mock(NotifierInterface::class);
+
+        // Create real CommunicationFactory with dependencies
+        $settings = new CommunicationSettings(
+            new Address('default@example.com', 'Default User')
+        );
+
+        $channelContextFactory = new ChannelContextFactory([
+            'email' => EmailContext::class,
+            'sms' => SmsContext::class,
+        ]);
+
+        $this->communicationFactory = new CommunicationFactory(
+            $channelContextFactory,
+            $settings
+        );
 
         // Create a real notification factory
         $notificationFactory = new class () {
@@ -44,14 +66,19 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
              */
             public function create(EmailContext $context, string $channel): EmailNotification
             {
-                return new EmailNotification($context, [$channel]);
+                // Create a mock EmailMessage for testing
+                $emailMessage = Mockery::mock(EmailMessage::class);
+                $emailMessage->shouldReceive('getSubject')->andReturn('Test Subject');
+
+                return new EmailNotification($emailMessage);
             }
         };
 
         $this->sendCommunication = new SendCommunication(
             $this->definitionRepository,
             ['email' => $notificationFactory],
-            $this->notifier
+            $this->notifier,
+            $this->communicationFactory
         );
     }
 
@@ -202,6 +229,69 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
 
         // Act
         $this->sendCommunication->send($communication);
+
+        // Mockery will verify all expectations
+    }
+
+    public function testSendCommunicationWithArrayInput(): void
+    {
+        // Arrange - Create array data that will be converted to Communication by factory
+        $arrayData = [
+            'definitionId' => 'test.notification',
+            'channels' => ['email'],
+            'recipients' => [
+                [
+                    'email' => 'user@example.com',
+                    'name' => 'Test User',
+                ],
+            ],
+            'context' => [
+                'subject' => ['name' => 'Test User'],
+                'body' => ['message' => 'Hello from array input!'],
+            ],
+            'from' => [
+                'email' => 'sender@example.com',
+                'name' => 'Test Sender',
+            ],
+        ];
+
+        // Create a real communication definition
+        $definition = new CommunicationDefinition('test.notification', 'Test Notification');
+
+        // Create a real email channel definition
+        $emailDef = new EmailChannelDefinition(
+            'emails/test-notification.html.twig',
+            [
+                'type' => 'object',
+                'required' => ['message'],
+                'properties' => [
+                    'message' => ['type' => 'string'],
+                ],
+            ],
+            [
+                'type' => 'object',
+                'required' => ['subject'],
+                'properties' => [
+                    'subject' => ['type' => 'string'],
+                ],
+            ],
+            'notifications@example.com'
+        );
+
+        $definition->addChannelDefinition($emailDef);
+
+        // Setup repository mock to return our real definition
+        $this->definitionRepository->shouldReceive('findByIdentifier')
+            ->with('test.notification')
+            ->andReturn($definition);
+
+        // Setup notifier mock to verify sending
+        $this->notifier->shouldReceive('send')
+            ->with(Mockery::type(EmailNotification::class), Mockery::type(Recipient::class))
+            ->atLeast()->once();
+
+        // Act - Send using array input (this will use CommunicationFactory internally)
+        $this->sendCommunication->send($arrayData);
 
         // Mockery will verify all expectations
     }

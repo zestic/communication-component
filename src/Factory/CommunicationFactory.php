@@ -22,19 +22,24 @@ class CommunicationFactory
     public function create(array $data): Communication
     {
         $context = $this->createContext($data);
+        $communication = new Communication($data['definitionId'], $context);
 
-        return new Communication($data['definitionId'], $context);
+        // Add recipients to the communication object
+        $recipients = $this->createRecipients($data);
+        if (!empty($recipients)) {
+            $communication->addRecipient($recipients);
+        }
+
+        return $communication;
     }
 
     private function createContext(array $data): CommunicationContext
     {
         $channelContexts = $this->getChannelContexts($data);
         $context = new CommunicationContext($channelContexts);
-        $recipients = $this->createRecipients($data);
         $fromAddress = $this->getFromAddress($data);
 
         $context->setFrom($fromAddress);
-        $context->setRecipients($recipients);
 
         $this->setContextData($context, $data);
 

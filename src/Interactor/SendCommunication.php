@@ -126,7 +126,6 @@ class SendCommunication
 
     private function sendToRecipient(Recipient $recipient, Communication $communication, CommunicationDefinition $definition): void
     {
-        xdebug_break();
         foreach ($recipient->getChannels() as $channel) {
             /** @var NotificationFactoryInterface $notificationFactory */
             $notificationFactory = $this->notificationFactories[$channel];
