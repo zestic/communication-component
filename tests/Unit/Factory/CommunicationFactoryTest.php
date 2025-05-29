@@ -195,8 +195,8 @@ class CommunicationFactoryTest extends TestCase
 
         $emailContext = $communication->getContext()->getContext('email');
         $this->assertNotNull($emailContext);
-        $this->assertEquals('noreply@americasmailbox.com', $emailContext->getFrom()->getAddress());
-        $this->assertEquals('Americas Mailbox', $emailContext->getFrom()->getName());
+        $this->assertEquals('noreply@zestic.com', $emailContext->getFrom()->getAddress());
+        $this->assertEquals('Zestic', $emailContext->getFrom()->getName());
 
         // Check that subject context was set
         $this->assertEquals(['name' => 'John Doe'], $emailContext->getSubjectContext());
