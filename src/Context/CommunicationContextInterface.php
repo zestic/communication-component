@@ -17,6 +17,15 @@ interface CommunicationContextInterface
 
     public function setBodyContext(array $bodyContext): self;
 
+    /**
+     * @param mixed $value
+     */
+    public function addSubjectContext(string $name, $value): self;
+
+    public function getSubjectContext(): array;
+
+    public function setSubjectContext(array $subjectContext): self;
+
     public function getFrom(): ?Address;
 
     /**

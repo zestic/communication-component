@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Communication\Factory;
 
 use Communication\Context\CommunicationContext;
-use Communication\Context\CommunicationContextInterface;
-use Communication\Context\EmailContext;
 use Communication\Entity\Communication;
 use Communication\Entity\CommunicationSettings;
+use Communication\Entity\Recipient;
 use Communication\Factory\Context\ChannelContextFactory;
+use Symfony\Component\Mime\Address;
 
 class CommunicationFactory
 {
@@ -29,9 +29,13 @@ class CommunicationFactory
     {
         $channelContexts = $this->getChannelContexts($data);
         $context = new CommunicationContext($channelContexts);
-        $recipients = $this->getRecipients($data);
-        $context->setFrom($this->settings->getFromAddress());
+        $recipients = $this->createRecipients($data);
+        $fromAddress = $this->getFromAddress($data);
+
+        $context->setFrom($fromAddress);
         $context->setRecipients($recipients);
+
+        $this->setContextData($context, $data);
 
         return $context;
     }
@@ -46,16 +50,84 @@ class CommunicationFactory
         return $channelContexts;
     }
 
-    private function createChannelContext(string $channel, array $data): CommunicationContextInterface
+    private function createRecipients(array $data): array
     {
-        return match ($channel) {
-            'email' => new EmailContext(),
-            default => throw new \RuntimeException("Unknown channel: $channel")
-        };
+        $recipientsData = $data['recipients'] ?? [];
+        $recipients = [];
+
+        foreach ($recipientsData as $recipientData) {
+            $recipient = new Recipient();
+
+            if (isset($recipientData['email'])) {
+                $recipient->setEmail($recipientData['email']);
+            }
+
+            if (isset($recipientData['name'])) {
+                $recipient->setName($recipientData['name']);
+            }
+
+            if (isset($recipientData['phone'])) {
+                $recipient->setPhone($recipientData['phone']);
+            }
+
+            $recipients[] = $recipient;
+        }
+
+        return $recipients;
     }
 
-    private function getRecipients(array $data): array
+    private function getFromAddress(array $data): Address
     {
-        return $data['recipients'] ?? [];
+        if (isset($data['from'])) {
+            if (is_array($data['from'])) {
+                $email = $data['from']['email'] ?? throw new \InvalidArgumentException('From array must contain "email" key');
+                $name = $data['from']['name'] ?? '';
+                return new Address($email, $name);
+            }
+
+            if (is_string($data['from'])) {
+                return new Address($data['from']);
+            }
+
+            if ($data['from'] instanceof Address) {
+                return $data['from'];
+            }
+        }
+
+        return $this->settings->getFromAddress();
     }
+
+    private function setContextData(CommunicationContext $context, array $data): void
+    {
+        if (!isset($data['context']) || !is_array($data['context'])) {
+            return;
+        }
+
+        $contextData = $data['context'];
+
+        // Set subject context if provided
+        if (isset($contextData['subject']) && is_array($contextData['subject'])) {
+            $context->setSubjectContext($contextData['subject']);
+        }
+
+        // Set body context if provided
+        if (isset($contextData['body']) && is_array($contextData['body'])) {
+            $context->setBodyContext($contextData['body']);
+        }
+
+        // Set channel-specific contexts
+        foreach ($contextData as $channel => $channelData) {
+            if (in_array($channel, ['subject', 'body']) || !is_array($channelData)) {
+                continue;
+            }
+
+            $channelContext = $context->getContext($channel);
+            if ($channelContext !== null) {
+                foreach ($channelData as $key => $value) {
+                    $channelContext->addBodyContext($key, $value);
+                }
+            }
+        }
+    }
+
 }

@@ -74,6 +74,15 @@ class CommunicationContext
         return $this;
     }
 
+    public function setSubjectContext(array $subjectContext): CommunicationContext
+    {
+        foreach ($this->channelContexts as $context) {
+            $context->setSubjectContext($subjectContext);
+        }
+
+        return $this;
+    }
+
     /**
      * @param mixed $from
      */
