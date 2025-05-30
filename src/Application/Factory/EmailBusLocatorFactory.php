@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory;
+namespace Communication\Application\Factory;
 
 use Communication\Locator\CommunicationBusLocator;
 use Laminas\ServiceManager\Factory\FactoryInterface;

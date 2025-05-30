@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory\Transport\Email;
+namespace Communication\Application\Factory\Transport\Email;
 
 use ConfigValue\GatherConfigValues;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesSmtpTransport;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class AmazonsmtpFactory
+final class SmtpFactory
 {
     /** @var string */
     private $id;
@@ -19,15 +19,20 @@ final class AmazonsmtpFactory
         $this->id = $id;
     }
 
-    public function __invoke(ContainerInterface $container): SesSmtpTransport
+    public function __invoke(ContainerInterface $container): EsmtpTransport
     {
         $config = (new GatherConfigValues())($container, $this->id);
         $dispatcher = $container->get(EventDispatcherInterface::class);
         if (!$dispatcher instanceof EventDispatcherInterface) {
             throw new \RuntimeException('Expected EventDispatcherInterface from container');
         }
-        $logger = null;
+        $logger = $config['logger'] ?? null;
 
-        return new SesSmtpTransport($config['username'], $config['password'], $config['region'], $dispatcher, $logger);
+        $transport = new EsmtpTransport($config['uri'], (int) $config['port'], false, $dispatcher, $logger);
+        $transport
+            ->setPassword($config['password'])
+            ->setUsername($config['username']);
+
+        return $transport;
     }
 }

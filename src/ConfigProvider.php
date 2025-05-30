@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace Communication;
 
+use Communication\Application\Factory\BodyRendererFactory;
+use Communication\Application\Factory\Channel\EmailChannelFactory;
+use Communication\Application\Factory\EmailBusLocatorFactory;
+use Communication\Application\Factory\Entity\CommunicationSettingsFactory;
+use Communication\Application\Factory\EventDispatcherFactory;
 use Communication\Application\Factory\Factory\Context\ChannelContextFactoryFactory;
 use Communication\Application\Factory\Interactor\SendCommunicationFactory;
+use Communication\Application\Factory\MessageHandlerFactory;
+use Communication\Application\Factory\NotifierFactory;
+use Communication\Application\Factory\Transport\CommunicationTransportFactory;
 use Communication\Command\SendTestEmailCommand;
 use Communication\Context\EmailContext;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
 use Communication\Definition\Repository\PostgresCommunicationDefinitionRepository;
-use Communication\Factory\BodyRendererFactory;
-use Communication\Factory\Channel\EmailChannelFactory;
+use Communication\Entity\CommunicationSettings;
 use Communication\Factory\Context\ChannelContextFactory;
-use Communication\Factory\EmailBusLocatorFactory;
-use Communication\Factory\EventDispatcherFactory;
-use Communication\Factory\Legacy\CommunicationFactory;
-use Communication\Factory\MessageHandlerFactory;
+use Communication\Factory\Legacy\CommunicationFactory as LegacyCommunicationFactory;
 use Communication\Factory\Notification\EmailNotificationFactory;
-use Communication\Factory\NotifierFactory;
-use Communication\Factory\Transport\CommunicationTransportFactory;
 use Communication\Interactor\SendCommunication;
 use Communication\Locator\CommunicationBusLocator;
 use Communication\Template\PdoTemplateRepository;
@@ -66,7 +68,7 @@ class ConfigProvider
     {
         return [
             'abstract_factories' => [
-                CommunicationFactory::class,
+                LegacyCommunicationFactory::class,
             ],
             'aliases' => [
                 CommunicationDefinitionRepositoryInterface::class => PostgresCommunicationDefinitionRepository::class,
@@ -110,6 +112,7 @@ class ConfigProvider
                 ),
                 BodyRenderer::class => BodyRendererFactory::class,
                 ChannelContextFactory::class => ChannelContextFactoryFactory::class,
+                CommunicationSettings::class => CommunicationSettingsFactory::class,
                 Environment::class => TwigEnvironmentFactory::class,
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
                 NotifierInterface::class => NotifierFactory::class,

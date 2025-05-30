@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory;
+namespace Communication\Application\Factory;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Notifier\Notifier;

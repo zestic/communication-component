@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory\Transport;
+namespace Communication\Application\Factory\Transport;
 
 use ConfigValue\GatherConfigValues;
 use Psr\Container\ContainerInterface;
@@ -18,7 +18,7 @@ final class CommunicationTransportFactory
     {
         $config = (new GatherConfigValues())($container, $this->config);
         $type = ucfirst(strtolower($config['type']));
-        $transportFactory = "Communication\\Factory\\Transport\\Email\\{$type}Factory";
+        $transportFactory = "Communication\\Application\\Factory\\Transport\\Email\\{$type}Factory";
 
         return (new $transportFactory($this->config))($container);
     }

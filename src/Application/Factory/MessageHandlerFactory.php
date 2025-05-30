@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory;
+namespace Communication\Application\Factory;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;

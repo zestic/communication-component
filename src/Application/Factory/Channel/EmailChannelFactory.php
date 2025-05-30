@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory\Channel;
+namespace Communication\Application\Factory\Channel;
 
 use ConfigValue\GatherConfigValues;
 use Psr\Container\ContainerInterface;

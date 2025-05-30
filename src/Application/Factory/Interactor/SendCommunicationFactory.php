@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Communication\Application\Factory\Interactor;
 
+use Communication\Application\Factory\Entity\CommunicationFactory;
 use Communication\Context\CommunicationContext;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
-use Communication\Factory\CommunicationFactory;
 use Communication\Interactor\SendCommunication;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Notifier\NotifierInterface;

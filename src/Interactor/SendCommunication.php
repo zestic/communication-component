@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Communication\Interactor;
 
+use Communication\Application\Factory\Entity\CommunicationFactory;
 use Communication\Definition\CommunicationDefinition;
 use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
 use Communication\Entity\Communication;
 use Communication\Entity\Recipient;
-use Communication\Factory\CommunicationFactory;
 use Communication\Factory\Notification\NotificationFactoryInterface;
 use Symfony\Component\Notifier\NotifierInterface;
 

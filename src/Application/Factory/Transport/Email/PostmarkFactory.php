@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Factory\Transport\Email;
+namespace Communication\Application\Factory\Transport\Email;
 
 use ConfigValue\GatherConfigValues;
 use Psr\Container\ContainerInterface;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Communication\Interactor;
 
+use Communication\Application\Factory\Entity\CommunicationFactory;
 use Communication\Context\CommunicationContext;
 use Communication\Context\EmailContext;
 use Communication\Context\SmsContext;
@@ -13,7 +14,6 @@ use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterfa
 use Communication\Entity\Communication;
 use Communication\Entity\CommunicationSettings;
 use Communication\Entity\Recipient;
-use Communication\Factory\CommunicationFactory;
 use Communication\Factory\Context\ChannelContextFactory;
 use Communication\Factory\Notification\NotificationFactoryInterface;
 use Communication\Interactor\SendCommunication;
