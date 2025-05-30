@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Communication\Interactor;
 
-use Communication\Application\Factory\Entity\CommunicationFactory;
 use Communication\Context\CommunicationContext;
 use Communication\Context\CommunicationContextInterface;
 use Communication\Definition\CommunicationDefinition;
@@ -12,6 +11,7 @@ use Communication\Definition\EmailChannelDefinition;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
 use Communication\Entity\Communication;
 use Communication\Entity\Recipient;
+use Communication\Factory\Entity\CommunicationFactory;
 use Communication\Interactor\SendCommunication;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

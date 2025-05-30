@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Communication\Application\Factory\Interactor;
 
-use Communication\Application\Factory\Entity\CommunicationFactory;
 use Communication\Context\CommunicationContext;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
+use Communication\Factory\Entity\CommunicationFactory;
 use Communication\Interactor\SendCommunication;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -32,9 +32,15 @@ class SendCommunicationFactory
         }
 
         $definitionRepository = $container->get(CommunicationDefinitionRepositoryInterface::class);
+        assert($definitionRepository instanceof CommunicationDefinitionRepositoryInterface);
+
         $notificationFactories = $this->getNotificationFactories($container, $commConfig['channel']);
+
         $notifier = $container->get(NotifierInterface::class);
+        assert($notifier instanceof NotifierInterface);
+
         $communicationFactory = $container->get(CommunicationFactory::class);
+        assert($communicationFactory instanceof CommunicationFactory);
 
         return new SendCommunication($definitionRepository, $notificationFactories, $notifier, $communicationFactory);
     }

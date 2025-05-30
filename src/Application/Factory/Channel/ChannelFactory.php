@@ -6,6 +6,8 @@ namespace Communication\Application\Factory\Channel;
 
 abstract class ChannelFactory implements ChannelFactoryInterface
 {
+    protected string $channel;
+
     protected function getBus(array $config): ?string
     {
         $channelParts = explode('.', $this->channel);

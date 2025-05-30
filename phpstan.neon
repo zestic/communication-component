@@ -8,10 +8,10 @@ parameters:
 
         - '#Instantiated class Symfony\\Component\\Mailer\\Bridge\\Postmark\\Transport\\PostmarkTransportFactory not found#'
         - '#Call to method create\(\) on an unknown class Symfony\\Component\\Mailer\\Bridge\\Postmark\\Transport\\PostmarkTransportFactory#'
-        - '#Access to an undefined property Communication\\Factory\\Channel\\ChannelFactory::\$channel#'
+
         - '#Method Communication\\Application\\Factory\\Transport\\CommunicationTransportFactory::__invoke\(\) has no return type specified#'
         - '#Trying to invoke object but it might not be a callable#'
-        - '#Method Communication\\Factory\\Context\\ContextFactoryInterface::create\(\) has no return type specified#'
+
         - '#Expression on left side of \?\? is not nullable#'
         - '#Call to an undefined method object::create\(\)#'
         - '#Call to an undefined method Communication\\Context\\CommunicationContext::setSubject\(\)#'

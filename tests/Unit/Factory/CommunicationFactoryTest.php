@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Communication\Factory;
 
-use Communication\Application\Factory\Entity\CommunicationFactory;
 use Communication\Context\EmailContext;
 use Communication\Context\SmsContext;
 use Communication\Entity\Communication;
 use Communication\Entity\CommunicationSettings;
 use Communication\Factory\Context\ChannelContextFactory;
+use Communication\Factory\Entity\CommunicationFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mime\Address;
 
 /**
- * @covers \Communication\Application\Factory\Entity\CommunicationFactory
+ * @covers \Communication\Factory\Entity\CommunicationFactory
  */
 class CommunicationFactoryTest extends TestCase
 {
