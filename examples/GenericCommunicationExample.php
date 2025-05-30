@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Communication\Examples;
 
-use Communication\Communication;
+use Communication\Entity\Communication;
 use Communication\Context\CommunicationContext;
 use Communication\Context\EmailContext;
 use Communication\Interactor\SendCommunication;
@@ -24,15 +24,15 @@ class GenericCommunicationExample
     ): void {
         // Create a new Communication with the generic.email definition ID
         $communication = new Communication('generic.email');
-        
+
         // Create a recipient
         $recipient = (new Recipient())
             ->setEmail($recipientEmail)
             ->setName($recipientName);
-        
+
         // Add the recipient to the communication
         $communication->addRecipient($recipient);
-        
+
         // Set the context data for the email channel
         $emailContext = new EmailContext(/* email message factory would be injected */);
         $emailContext->setSubject("Generic Email");
@@ -43,20 +43,20 @@ class GenericCommunicationExample
                 'sender' => 'System'
             ]
         ]);
-        
+
         // Create a communication context with the email context
         $context = new CommunicationContext(['email' => $emailContext]);
-        
+
         // Set the context on the communication
         $communication = new Communication('generic.email', $context);
-        
+
         // Add the recipient to the communication
         $communication->addRecipient($recipient);
-        
+
         // Send the communication
         $sender->send($communication);
     }
-    
+
     public function sendWelcomeEmail(
         SendCommunication $sender,
         string $recipientEmail,
@@ -78,7 +78,7 @@ HTML;
         // Send the welcome email using the generic communication
         $this->sendGenericEmail($sender, $recipientEmail, $recipientName, $body);
     }
-    
+
     public function sendPasswordResetEmail(
         SendCommunication $sender,
         string $recipientEmail,
