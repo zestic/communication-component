@@ -19,7 +19,7 @@ class CommunicationSettings
     }
 
     /**
-     * @param Address|string|array{email: string, name?: string} $fromAddress
+     * @param Address|string|array<string, mixed> $fromAddress
      */
     public function setFromAddress(Address|string|array $fromAddress): self
     {
@@ -28,7 +28,10 @@ class CommunicationSettings
         } elseif (is_string($fromAddress)) {
             $this->fromAddress = new Address($fromAddress);
         } elseif (is_array($fromAddress)) {
-            $email = $fromAddress['email'] ?? throw new \InvalidArgumentException('Array must contain "email" key');
+            if (!array_key_exists('email', $fromAddress) || !is_string($fromAddress['email']) || $fromAddress['email'] === '') {
+                throw new \InvalidArgumentException('Array must contain "email" key');
+            }
+            $email = $fromAddress['email'];
             $name = $fromAddress['name'] ?? '';
             $this->fromAddress = new Address($email, $name);
         } else {

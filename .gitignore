@@ -9,6 +9,7 @@ vendor/
 coverage/
 coverage.xml
 .env
+.env.test
 .php-cs-fixer.cache
 
 # VS Code

@@ -30,6 +30,17 @@ abstract class Communication
         return $this->context;
     }
 
+    /**
+     * @return Recipient[]
+     */
+    public function getRecipients(): array
+    {
+        return $this->recipients;
+    }
+
+    /**
+     * @param Recipient|Recipient[]|mixed $recipients
+     */
     public function addRecipient($recipients): self
     {
         if (!is_array($recipients)) {
@@ -43,15 +54,17 @@ abstract class Communication
         return $this;
     }
 
-    public function send()
+    public function send(): void
     {
         $communication = new CommunicationEntity($this->getDefinitionId(), $this->context);
         $this->sendCommunication->send($communication);
     }
 
-    public function setFrom(Recipient|Address|string $address)
+    public function setFrom(Recipient|Address|string $address): self
     {
         $this->context->setFrom($address);
+
+        return $this;
     }
 
     abstract protected function getTemplates(): array;

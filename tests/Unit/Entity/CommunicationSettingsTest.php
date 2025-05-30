@@ -127,6 +127,7 @@ class CommunicationSettingsTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
+        // @phpstan-ignore-next-line - Testing invalid parameter type
         $this->settings->setFromAddress(123); // Invalid type
     }
 
@@ -148,6 +149,7 @@ class CommunicationSettingsTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
+        // @phpstan-ignore-next-line - Testing invalid parameter type
         $this->settings->setFromAddress(new \stdClass());
     }
 
@@ -158,6 +160,7 @@ class CommunicationSettingsTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
+        // @phpstan-ignore-next-line - Testing invalid parameter type
         $this->settings->setFromAddress(null);
     }
 

@@ -13,14 +13,17 @@ class CommunicationFactory implements AbstractFactoryInterface
 {
     use CommunicationFactoryTrait;
 
-    public function canCreate(ContainerInterface $container, $requestedName): bool
+    public function canCreate(ContainerInterface $container, string $requestedName): bool
     {
         return (is_a($requestedName, Communication::class, true));
     }
 
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): mixed
+    public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): mixed
     {
         $config = $container->get('config')['communication'];
+        if (!isset($config['context']) || !is_array($config['context'])) {
+            throw new \RuntimeException('Invalid configuration: missing or invalid communication.context configuration');
+        }
         $context = $this->getContext($container, $config['context']);
 
         return new $requestedName(

@@ -11,9 +11,7 @@ class EmailContextFactory implements ContextFactoryInterface
 {
     public function create(ContainerInterface $container, array $config): EmailContext
     {
-        $messageFactory = $container->get($config['messageFactory']);
-
-        return (new EmailContext($messageFactory))
+        return (new EmailContext())
             ->setCc($config['data']['cc'] ?? [])
             ->setBcc($config['data']['bcc'] ?? [])
             ->setFrom($config['data']['from'] ?? null)

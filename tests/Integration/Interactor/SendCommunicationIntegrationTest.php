@@ -15,6 +15,7 @@ use Communication\Entity\CommunicationSettings;
 use Communication\Entity\Recipient;
 use Communication\Factory\CommunicationFactory;
 use Communication\Factory\Context\ChannelContextFactory;
+use Communication\Factory\Notification\NotificationFactoryInterface;
 use Communication\Interactor\SendCommunication;
 use Communication\Notification\EmailNotification;
 use Mockery;
@@ -58,13 +59,8 @@ class SendCommunicationIntegrationTest extends MockeryTestCase
         );
 
         // Create a real notification factory
-        $notificationFactory = new class () {
-            /**
-             * @param EmailContext $context
-             * @param string $channel
-             * @return EmailNotification
-             */
-            public function create(EmailContext $context, string $channel): EmailNotification
+        $notificationFactory = new class () implements NotificationFactoryInterface {
+            public function create(\Communication\Context\CommunicationContextInterface $context): \Symfony\Component\Notifier\Notification\Notification
             {
                 // Create a mock EmailMessage for testing
                 $emailMessage = Mockery::mock(EmailMessage::class);

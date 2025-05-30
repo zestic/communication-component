@@ -13,6 +13,10 @@ final class ChannelContextFactoryFactory
     {
         $config = $container->get('config')['communication'];
 
+        if (!isset($config['channelContexts']) || !is_array($config['channelContexts'])) {
+            throw new \RuntimeException('Invalid configuration: missing or invalid communication.channelContexts configuration');
+        }
+
         return new ChannelContextFactory($config['channelContexts']);
     }
 }

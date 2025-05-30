@@ -8,13 +8,13 @@ use Communication\Template\PdoTemplateRepository;
 use Communication\Template\Template;
 use DateTimeImmutable;
 use PDO;
-use PHPUnit\Framework\TestCase;
+use Tests\Integration\IntegrationTestCase;
 
 /**
  * @covers \Communication\Template\PdoTemplateRepository
  * @uses \Communication\Template\Template
  */
-class PdoTemplateRepositoryIntegrationTest extends TestCase
+class PdoTemplateRepositoryIntegrationTest extends IntegrationTestCase
 {
     private PDO $pdo;
 
@@ -22,40 +22,56 @@ class PdoTemplateRepositoryIntegrationTest extends TestCase
 
     protected function setUp(): void
     {
-        $host = getenv('DB_HOST') ?: 'localhost';
-        $dbname = getenv('DB_NAME') ?: 'communication_test';
-        $user = getenv('DB_USER') ?: 'postgres';
-        $password = getenv('DB_PASSWORD') ?: 'postgres';
-        $port = getenv('DB_PORT') ?: '5432';
+        // Get database connection parameters from environment variables
+        $host = getenv('POSTGRES_TEST_HOST');
+        $port = getenv('POSTGRES_TEST_PORT');
+        $dbname = getenv('POSTGRES_TEST_DB');
+        $user = getenv('POSTGRES_TEST_USER');
+        $password = getenv('POSTGRES_TEST_PASSWORD');
+        $schema = getenv('POSTGRES_TEST_SCHEMA');
+
+        // For backward compatibility with existing tests
+        $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};options='--search_path={$schema}'";
 
         $this->pdo = new PDO(
-            "pgsql:host={$host};port={$port};dbname={$dbname}",
-            $user,
-            $password,
+            $dsn,
+            $user ?: null,
+            $password ?: null,
             [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]
         );
 
-        // Drop table if exists and create new one
-        $this->pdo->exec('DROP TABLE IF EXISTS communication_templates');
-        $this->pdo->exec('
-            CREATE TABLE communication_templates (
+        // Ensure the schema exists
+        $this->pdo->exec("CREATE SCHEMA IF NOT EXISTS {$schema}");
+
+        // Drop table if exists to ensure a clean state
+        $this->pdo->exec("DROP TABLE IF EXISTS {$schema}.communication_templates");
+
+        // Create table manually since Phinx migrations are not working properly
+        $this->createTable($schema ?: 'communication_component');
+
+        $this->repository = new PdoTemplateRepository($this->pdo);
+    }
+
+    private function createTable(string $schema): void
+    {
+        // Create communication_templates table
+        $this->pdo->exec("
+            CREATE TABLE {$schema}.communication_templates (
                 id VARCHAR(26) PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 channel VARCHAR(50) NOT NULL,
                 subject VARCHAR(255),
                 content TEXT NOT NULL,
-                content_type VARCHAR(50) NOT NULL DEFAULT \'text/html\',
+                content_type VARCHAR(50) NOT NULL DEFAULT 'text/html',
                 metadata JSONB,
-                created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-                updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 UNIQUE (name, channel)
             )
-        ');
-
-        $this->repository = new PdoTemplateRepository($this->pdo);
+        ");
     }
 
     /**

@@ -140,9 +140,13 @@ class AbstractCommunicationContextTest extends TestCase
         $this->assertSame('string@example.com', $recipientAddresses[0]->getAddress());
         $this->assertSame('address@example.com', $recipientAddresses[1]->getAddress());
         $this->assertSame('Address Name', $recipientAddresses[1]->getName());
+        // @phpstan-ignore-next-line
         $this->assertSame('array@example.com', $recipientAddresses[2]->getAddress());
+        // @phpstan-ignore-next-line
         $this->assertSame('Array Name', $recipientAddresses[2]->getName());
+        // @phpstan-ignore-next-line
         $this->assertSame('recipient@example.com', $recipientAddresses[3]->getAddress());
+        // @phpstan-ignore-next-line
         $this->assertSame('Recipient Name', $recipientAddresses[3]->getName());
     }
 
@@ -276,6 +280,7 @@ class TestableAbstractCommunicationContext extends AbstractCommunicationContext
 {
     /**
      * Expose the protected extractAddress method for testing
+     * @param mixed $address
      */
     public function testExtractAddress($address): Address
     {

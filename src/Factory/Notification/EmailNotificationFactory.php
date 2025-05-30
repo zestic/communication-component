@@ -8,6 +8,7 @@ use Communication\Context\CommunicationContextInterface;
 use Communication\Context\EmailContext;
 use Communication\Factory\Message\EmailMessageFactory;
 use Communication\Notification\EmailNotification;
+use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Notification\Notification;
 
 final class EmailNotificationFactory implements NotificationFactoryInterface
@@ -20,6 +21,10 @@ final class EmailNotificationFactory implements NotificationFactoryInterface
     public function create(EmailContext|CommunicationContextInterface $emailContext): Notification
     {
         $emailMessage = $this->emailMessageFactory->createMessage($emailContext);
+
+        if (!$emailMessage instanceof EmailMessage) {
+            throw new \RuntimeException('Expected EmailMessage, got ' . get_class($emailMessage));
+        }
 
         return new EmailNotification($emailMessage);
     }

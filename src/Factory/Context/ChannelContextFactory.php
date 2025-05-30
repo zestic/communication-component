@@ -8,6 +8,9 @@ use Communication\Context\CommunicationContextInterface;
 
 class ChannelContextFactory
 {
+    /**
+     * @param array<string, class-string<CommunicationContextInterface>> $channelContexts
+     */
     public function __construct(
         private array $channelContexts,
     ) {
@@ -18,8 +21,9 @@ class ChannelContextFactory
         if (!isset($this->channelContexts[$channel])) {
             throw new \RuntimeException("Unknown channel: $channel");
         }
-        $context = $this->channelContexts[$channel];
+        $contextClass = $this->channelContexts[$channel];
 
-        return new $context();
+        /** @var CommunicationContextInterface */
+        return new $contextClass();
     }
 }

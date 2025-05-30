@@ -53,13 +53,14 @@ class SendCommunicationTest extends MockeryTestCase
         $smsNotificationFactory = Mockery::mock('SmsNotificationFactory');
         $this->notificationFactories = [
             'email' => $this->notificationFactory,
-            'sms' => $smsNotificationFactory
+            'sms' => $smsNotificationFactory,
         ];
         $this->notifier = Mockery::mock(NotifierInterface::class);
         $this->communicationFactory = Mockery::mock(CommunicationFactory::class);
 
         $this->sendCommunication = new SendCommunication(
             $this->definitionRepository,
+            // @phpstan-ignore-next-line - Mock array for testing
             $this->notificationFactories,
             $this->notifier,
             $this->communicationFactory
@@ -152,7 +153,7 @@ class SendCommunicationTest extends MockeryTestCase
 
         // Setup notification creation expectations
         $this->notificationFactory->shouldReceive('create')
-            ->with($this->emailContext, 'email')
+            ->with($this->emailContext)
             ->andReturn($this->notification);
 
         // Setup sending expectations
@@ -233,7 +234,7 @@ class SendCommunicationTest extends MockeryTestCase
 
         // Setup notification creation expectations
         $this->notificationFactory->shouldReceive('create')
-            ->with($this->emailContext, 'email')
+            ->with($this->emailContext)
             ->andReturn($this->notification);
 
         // Setup sending expectations
@@ -270,6 +271,7 @@ class SendCommunicationTest extends MockeryTestCase
         $recipient->setEmail('user@example.com');
 
         // Setup CommunicationFactory mock to create Communication from array
+        // @phpstan-ignore-next-line - Mock method call
         $this->communicationFactory->shouldReceive('create')
             ->with($arrayData)
             ->once()
@@ -330,7 +332,7 @@ class SendCommunicationTest extends MockeryTestCase
 
         // Setup notification creation expectations
         $this->notificationFactory->shouldReceive('create')
-            ->with($this->emailContext, 'email')
+            ->with($this->emailContext)
             ->andReturn($this->notification);
 
         // Setup sending expectations
@@ -353,6 +355,7 @@ class SendCommunicationTest extends MockeryTestCase
         ];
 
         // Setup CommunicationFactory mock to throw exception
+        // @phpstan-ignore-next-line - Mock method call
         $this->communicationFactory->shouldReceive('create')
             ->with($arrayData)
             ->once()

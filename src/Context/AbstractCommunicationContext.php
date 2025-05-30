@@ -222,6 +222,9 @@ abstract class AbstractCommunicationContext implements CommunicationContextInter
     {
         // Remove non-alphanumeric characters and convert to email-like format
         $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
+        if ($cleanPhone === null) {
+            $cleanPhone = $phone; // fallback to original if preg_replace fails
+        }
         $cleanPhone = str_replace('+', 'plus', $cleanPhone);
 
         return $cleanPhone . '@sms.internal';

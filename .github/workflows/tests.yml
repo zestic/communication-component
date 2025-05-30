@@ -40,18 +40,40 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
+      - name: Create .env.test file
+        run: |
+          cat > .env.test << 'EOL'
+          # Test database configuration
+          DB_HOST=localhost
+          DB_NAME=communication_test
+          DB_USER=postgres
+          DB_PASSWORD=postgres
+          DB_PORT=5432
+          POSTGRES_SCHEMA=communication_component
+
+          # PostgreSQL configuration (used by some tests)
+          POSTGRES_HOST=localhost
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=postgres
+          POSTGRES_DB=communication_test
+          POSTGRES_PORT=5432
+          POSTGRES_DSN=pgsql:host=localhost;port=5432;dbname=communication_test;options='--search_path=communication_component'
+          EOL
+
       - name: Set up database schema
         run: |
           # Create the test database if it doesn't exist
           PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE test;" || echo "Database 'test' already exists"
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE communication_test;" || echo "Database 'communication_test' already exists"
 
-          # Create the database tables needed for tests in communication_test
-          PGPASSWORD=postgres psql -h localhost -U postgres -d communication_test -c "$(cat migrations/V1__create_communication_definitions.sql)"
-          PGPASSWORD=postgres psql -h localhost -U postgres -d communication_test -c "$(cat migrations/V2__create_templates.sql)"
+          # Create the communication_component schema in both databases
+          PGPASSWORD=postgres psql -h localhost -U postgres -d communication_test -c "CREATE SCHEMA IF NOT EXISTS communication_component;"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "CREATE SCHEMA IF NOT EXISTS communication_component;"
 
-          # Create the database tables needed for tests in test database
-          PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "$(cat migrations/V1__create_communication_definitions.sql)"
-          PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "$(cat migrations/V2__create_templates.sql)"
+          # Run Phinx migrations for testing environment
+          vendor/bin/phinx migrate -e testing
+
+          # Create the database tables needed for tests in test database (for backward compatibility)
           PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "
             CREATE TABLE IF NOT EXISTS communication_templates (
                 id VARCHAR(26) PRIMARY KEY,
@@ -69,17 +91,6 @@ jobs:
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: communication_test
-          POSTGRES_PORT: 5432
-          DB_HOST: localhost
-          DB_NAME: communication_test
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_PORT: 5432
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3

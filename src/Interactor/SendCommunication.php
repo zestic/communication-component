@@ -15,7 +15,9 @@ use Symfony\Component\Notifier\NotifierInterface;
 
 class SendCommunication
 {
-    /** @var array<string, NotificationFactoryInterface> */
+    /**
+     * @param array<string, NotificationFactoryInterface> $notificationFactories
+     */
     public function __construct(
         private readonly CommunicationDefinitionRepositoryInterface $definitionRepository,
         private readonly array $notificationFactories,
@@ -133,7 +135,7 @@ class SendCommunication
             if (!$channelContext) {
                 continue;
             }
-            $notification = $notificationFactory->create($channelContext, $channel);
+            $notification = $notificationFactory->create($channelContext);
 
             // Send notification
             $this->notifier->send($notification, $recipient);

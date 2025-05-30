@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Communication\Factory\Interactor;
 
+use Communication\Context\CommunicationContext;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
+use Communication\Factory\CommunicationFactory;
 use Communication\Interactor\SendCommunication;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -32,8 +34,9 @@ class SendCommunicationFactory
         $definitionRepository = $container->get(CommunicationDefinitionRepositoryInterface::class);
         $notificationFactories = $this->getNotificationFactories($container, $commConfig['channel']);
         $notifier = $container->get(NotifierInterface::class);
+        $communicationFactory = $container->get(CommunicationFactory::class);
 
-        return new SendCommunication($definitionRepository, $notificationFactories, $notifier);
+        return new SendCommunication($definitionRepository, $notificationFactories, $notifier, $communicationFactory);
     }
 
     protected function getChannels(string $requestedName, array $config): array
