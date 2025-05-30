@@ -265,22 +265,26 @@ The email channel requires a transport configuration:
 
 ### Phinx Configuration
 
-Database migrations are handled by Phinx. Configuration in `phinx.yml`:
+Database migrations are handled by Phinx. Configuration in `phinx.php`:
 
-```yaml
-environments:
-    default_migration_table: phinxlog
-    default_environment: development
-
-    development:
-        adapter: pgsql
-        host: ${DB_HOST:-localhost}
-        name: ${DB_NAME:-communication_development}
-        user: ${DB_USER:-postgres}
-        pass: ${DB_PASSWORD:-postgres}
-        port: ${DB_PORT:-5432}
-        charset: utf8
-        schema: ${POSTGRES_SCHEMA:-communication_component}
+```php
+return [
+    'environments' => [
+        'default_migration_table' => 'phinxlog',
+        'default_environment' => 'development',
+        'development' => [
+            'adapter' => 'pgsql',
+            'host' => getenv('DB_HOST') ?: 'localhost',
+            'name' => getenv('DB_NAME') ?: 'communication_development',
+            'user' => getenv('DB_USER') ?: 'postgres',
+            'pass' => getenv('DB_PASSWORD') ?: 'postgres',
+            'port' => (int) (getenv('DB_PORT') ?: 5432),
+            'charset' => 'utf8',
+            'schema' => getenv('POSTGRES_SCHEMA') ?: 'communication_component',
+        ],
+        // ... other environments
+    ],
+];
 ```
 
 ## Complete Configuration Example

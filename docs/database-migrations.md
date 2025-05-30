@@ -4,7 +4,7 @@
 
 ## Overview
 
-This component uses Phinx for database migrations with a YAML configuration file (`phinx.yml`). The migrations are located in the `db/migrations` directory.
+This component uses Phinx for database migrations with a PHP configuration file (`phinx.php`). The migrations are located in the `db/migrations` directory.
 
 ## Running Migrations
 

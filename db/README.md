@@ -65,21 +65,19 @@ This will create a new migration file in the `db/migrations` directory.
 
 ## Configuration
 
-The Phinx configuration is in `phinx.yml` in the root directory. You can modify this file to change database connection settings or other Phinx options.
+The Phinx configuration is in `phinx.php` in the root directory. This PHP configuration file automatically loads environment variables from `.env` files and uses them for database connections.
 
 ### Database Credentials
 
-Before running migrations, make sure to update the database credentials in `phinx.yml`:
+Database credentials are automatically loaded from environment variables. Set them in your `.env` file:
 
-```yaml
-development:
-    adapter: pgsql
-    host: localhost
-    name: communication_development
-    user: your_postgres_username
-    pass: your_postgres_password
-    port: 5432
-    charset: utf8
+```bash
+DB_HOST=localhost
+DB_NAME=communication_development
+DB_USER=your_postgres_username
+DB_PASSWORD=your_postgres_password
+DB_PORT=5432
+POSTGRES_SCHEMA=communication_component
 ```
 
 You can also use environment variables for sensitive information:
