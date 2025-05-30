@@ -40,7 +40,9 @@
   "scripts": {
     "test": "phpunit",
     "test:coverage": "phpunit --coverage-html coverage",
-    "stan": "phpstan analyse -l max src tests",
+    "stan": "phpstan analyse",
+    "stan:tests": "phpstan analyse -c phpstan-tests.neon",
+    "stan:all": "phpstan analyse; phpstan analyse -c phpstan-tests.neon",
     "cs-check": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --dry-run --diff",
     "cs-fix": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
     "check": [

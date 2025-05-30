@@ -1,0 +1,17 @@
+parameters:
+    level: 7
+    paths:
+        - tests
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        # Mockery-related ignores for tests
+        - '#Call to an undefined method Mockery\\ExpectationInterface\|Mockery\\HigherOrderMessage::#'
+        - '#Call to an undefined method Mockery\\MockInterface\|.*::shouldReceive\(\)#'
+        - '#Call to an undefined method .*\|Mockery\\MockInterface::shouldReceive\(\)#'
+        - '#Property .* does not accept Mockery\\LegacyMockInterface#'
+        - '#Parameter .* expects .*, Mockery\\LegacyMockInterface given#'
+        - '#Parameter \#1 \$channelContexts of class Communication\\Context\\CommunicationContext constructor expects array<string, Communication\\Context\\CommunicationContextInterface>, array<string, Mockery\\LegacyMockInterface> given#'
+        # Test-specific method calls that don't exist in production
+        - '#Call to an undefined method Communication\\Definition\\ChannelDefinition::(getFromAddress|getReplyTo|getPriority|requiresAuth)\(\)#'
+
