@@ -23,6 +23,9 @@ final class SmtpFactory
     {
         $config = (new GatherConfigValues())($container, $this->id);
         $dispatcher = $container->get(EventDispatcherInterface::class);
+        if (!$dispatcher instanceof EventDispatcherInterface) {
+            throw new \RuntimeException('Expected EventDispatcherInterface from container');
+        }
         $logger = $config['logger'] ?? null;
 
         $transport = new EsmtpTransport($config['uri'], (int) $config['port'], false, $dispatcher, $logger);

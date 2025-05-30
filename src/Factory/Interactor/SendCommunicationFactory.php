@@ -32,9 +32,21 @@ class SendCommunicationFactory
         }
 
         $definitionRepository = $container->get(CommunicationDefinitionRepositoryInterface::class);
+        if (!$definitionRepository instanceof CommunicationDefinitionRepositoryInterface) {
+            throw new \RuntimeException('Expected CommunicationDefinitionRepositoryInterface from container');
+        }
+
         $notificationFactories = $this->getNotificationFactories($container, $commConfig['channel']);
+
         $notifier = $container->get(NotifierInterface::class);
+        if (!$notifier instanceof NotifierInterface) {
+            throw new \RuntimeException('Expected NotifierInterface from container');
+        }
+
         $communicationFactory = $container->get(CommunicationFactory::class);
+        if (!$communicationFactory instanceof CommunicationFactory) {
+            throw new \RuntimeException('Expected CommunicationFactory from container');
+        }
 
         return new SendCommunication($definitionRepository, $notificationFactories, $notifier, $communicationFactory);
     }

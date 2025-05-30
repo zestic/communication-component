@@ -33,6 +33,9 @@ class CommunicationSettings
             }
             $email = $fromAddress['email'];
             $name = $fromAddress['name'] ?? '';
+            if (!is_string($name)) {
+                $name = '';
+            }
             $this->fromAddress = new Address($email, $name);
         } else {
             throw new \InvalidArgumentException('fromAddress must be an Address instance, string, or array with email key');

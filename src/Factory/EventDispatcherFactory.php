@@ -16,6 +16,10 @@ final class EventDispatcherFactory
     public function __invoke(ContainerInterface $container): EventDispatcherInterface
     {
         $twig = $container->get(Environment::class);
+        if (!$twig instanceof Environment) {
+            throw new \RuntimeException('Expected Twig\Environment from container');
+        }
+
         $messageListener = new MessageListener(null, new BodyRenderer($twig));
 
         $dispatcher = new EventDispatcher();

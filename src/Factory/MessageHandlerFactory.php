@@ -20,6 +20,9 @@ final class MessageHandlerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): mixed
     {
         $transport = $container->get($this->transport);
+        if (!$transport instanceof \Symfony\Component\Mailer\Transport\TransportInterface) {
+            throw new \RuntimeException('Expected TransportInterface from container');
+        }
 
         return new MessageHandler($transport);
     }

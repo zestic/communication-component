@@ -13,6 +13,9 @@ class BodyRendererFactory
     public function __invoke(ContainerInterface $container): BodyRenderer
     {
         $twig = $container->get(Environment::class);
+        if (!$twig instanceof Environment) {
+            throw new \RuntimeException('Expected Twig\Environment from container');
+        }
 
         return new BodyRenderer($twig);
     }

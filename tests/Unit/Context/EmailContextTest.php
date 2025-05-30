@@ -123,7 +123,7 @@ class EmailContextTest extends TestCase
 
         $recipientAddresses = $this->context->getRecipientAddresses();
         $this->assertCount(3, $recipientAddresses);
-        // @phpstan-ignore-next-line
+        $this->assertNotEmpty($recipientAddresses);
         $this->assertInstanceOf(Address::class, $recipientAddresses[0]);
         $this->assertSame('user1@example.com', $recipientAddresses[0]->getAddress());
         $this->assertSame('user2@example.com', $recipientAddresses[1]->getAddress());
@@ -190,7 +190,6 @@ class EmailContextTest extends TestCase
         $this->assertSame('Email body content', $this->context->getBody());
         $this->assertCount(1, $this->context->getCc());
         $this->assertSame('Chained Subject', $this->context->getSubject());
-        // @phpstan-ignore-next-line
         $this->assertSame('sender@example.com', $this->context->getFrom()->getAddress());
         $this->assertSame(['key' => 'value'], $this->context->getBodyContext());
     }
@@ -219,18 +218,13 @@ class EmailContextTest extends TestCase
             ]);
 
         // Verify all properties are set correctly
-        // @phpstan-ignore-next-line
         $this->assertSame('sender@company.com', $this->context->getFrom()->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('Company Name', $this->context->getFrom()->getName());
 
         $recipients = $this->context->getRecipients();
         $this->assertCount(2, $recipients);
-        // @phpstan-ignore-next-line
         $this->assertSame('user1@example.com', $recipients[0]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('user2@example.com', $recipients[1]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('User Two', $recipients[1]->getName());
 
         $cc = $this->context->getCc();

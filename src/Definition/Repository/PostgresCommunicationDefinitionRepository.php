@@ -47,8 +47,19 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
             }
 
             $channelConfig = json_decode($row['channel_config'], true);
+            if (!is_array($channelConfig)) {
+                throw new \RuntimeException("Invalid channel_config JSON for channel: {$row['channel']}");
+            }
+
             $contextSchema = json_decode($row['context_schema'], true);
+            if (!is_array($contextSchema)) {
+                throw new \RuntimeException("Invalid context_schema JSON for channel: {$row['channel']}");
+            }
+
             $subjectSchema = json_decode($row['subject_schema'], true);
+            if (!is_array($subjectSchema)) {
+                throw new \RuntimeException("Invalid subject_schema JSON for channel: {$row['channel']}");
+            }
 
             $channelDef = match($row['channel']) {
                 'email' => new EmailChannelDefinition(
@@ -62,8 +73,8 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
                     $row['template'],
                     $contextSchema,
                     $subjectSchema,
-                    $channelConfig['priority'] ?? 0,
-                    $channelConfig['requires_auth'] ?? false
+                    (int) ($channelConfig['priority'] ?? 0),
+                    (bool) ($channelConfig['requires_auth'] ?? false)
                 ),
                 default => throw new \RuntimeException("Unknown channel type: {$row['channel']}")
             };
@@ -83,7 +94,7 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
             $stmt = $this->pdo->prepare('
                 INSERT INTO communication_definitions (identifier, name, updated_at)
                 VALUES (:identifier, :name, CURRENT_TIMESTAMP)
-                ON CONFLICT (identifier) 
+                ON CONFLICT (identifier)
                 DO UPDATE SET name = :name, updated_at = CURRENT_TIMESTAMP
             ');
 
@@ -94,7 +105,7 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
 
             // Delete existing channel definitions
             $stmt = $this->pdo->prepare('
-                DELETE FROM channel_definitions 
+                DELETE FROM channel_definitions
                 WHERE communication_identifier = :identifier
             ');
 
@@ -103,11 +114,11 @@ class PostgresCommunicationDefinitionRepository implements CommunicationDefiniti
             // Insert new channel definitions
             $stmt = $this->pdo->prepare('
                 INSERT INTO channel_definitions (
-                    communication_identifier, 
-                    channel, 
-                    template, 
-                    context_schema, 
-                    subject_schema, 
+                    communication_identifier,
+                    channel,
+                    template,
+                    context_schema,
+                    subject_schema,
                     channel_config
                 ) VALUES (
                     :identifier,

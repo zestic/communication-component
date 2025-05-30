@@ -20,11 +20,16 @@ class CommunicationFactory implements AbstractFactoryInterface
 
     public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): mixed
     {
-        $config = $container->get('config')['communication'];
-        if (!isset($config['context']) || !is_array($config['context'])) {
+        $config = $container->get('config');
+        if (!is_array($config) || !isset($config['communication']) || !is_array($config['communication'])) {
+            throw new \RuntimeException('Invalid configuration: missing or invalid communication configuration');
+        }
+
+        $commConfig = $config['communication'];
+        if (!isset($commConfig['context']) || !is_array($commConfig['context'])) {
             throw new \RuntimeException('Invalid configuration: missing or invalid communication.context configuration');
         }
-        $context = $this->getContext($container, $config['context']);
+        $context = $this->getContext($container, $commConfig['context']);
 
         return new $requestedName(
             $context,

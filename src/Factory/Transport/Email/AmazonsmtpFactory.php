@@ -23,6 +23,9 @@ final class AmazonsmtpFactory
     {
         $config = (new GatherConfigValues())($container, $this->id);
         $dispatcher = $container->get(EventDispatcherInterface::class);
+        if (!$dispatcher instanceof EventDispatcherInterface) {
+            throw new \RuntimeException('Expected EventDispatcherInterface from container');
+        }
         $logger = null;
 
         return new SesSmtpTransport($config['username'], $config['password'], $config['region'], $dispatcher, $logger);

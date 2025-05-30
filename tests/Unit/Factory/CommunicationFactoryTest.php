@@ -82,9 +82,7 @@ class CommunicationFactoryTest extends TestCase
 
         $emailContext = $communication->getContext()->getContext('email');
         $this->assertNotNull($emailContext);
-        // @phpstan-ignore-next-line - Verified not null above
         $this->assertEquals('override@example.com', $emailContext->getFrom()->getAddress());
-        // @phpstan-ignore-next-line - Verified not null above
         $this->assertEquals('Override User', $emailContext->getFrom()->getName());
     }
 
@@ -103,7 +101,6 @@ class CommunicationFactoryTest extends TestCase
         // Assert
         $this->assertInstanceOf(Communication::class, $communication);
         $emailContext = $communication->getContext()->getContext('email');
-        // @phpstan-ignore-next-line - Context exists for email channel
         $this->assertEquals('string@example.com', $emailContext->getFrom()->getAddress());
     }
 
@@ -123,9 +120,7 @@ class CommunicationFactoryTest extends TestCase
         // Assert
         $this->assertInstanceOf(Communication::class, $communication);
         $emailContext = $communication->getContext()->getContext('email');
-        // @phpstan-ignore-next-line - Context exists for email channel
         $this->assertEquals('address@example.com', $emailContext->getFrom()->getAddress());
-        // @phpstan-ignore-next-line - Context exists for email channel
         $this->assertEquals('Address User', $emailContext->getFrom()->getName());
     }
 

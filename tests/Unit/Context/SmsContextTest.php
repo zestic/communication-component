@@ -122,19 +122,12 @@ class SmsContextTest extends TestCase
         $recipientAddresses = $this->context->getRecipients();
         $this->assertCount(4, $recipientAddresses);
 
-        // @phpstan-ignore-next-line
         $this->assertSame('user3@sms.example.com', $recipientAddresses[0]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('user4@sms.example.com', $recipientAddresses[1]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('User Name', $recipientAddresses[1]->getName());
-        // @phpstan-ignore-next-line
         $this->assertSame('user5@sms.example.com', $recipientAddresses[2]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('Contact Name', $recipientAddresses[2]->getName());
-        // @phpstan-ignore-next-line
         $this->assertSame('plus4444444444@sms.internal', $recipientAddresses[3]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('Recipient Name', $recipientAddresses[3]->getName());
     }
 
@@ -235,10 +228,8 @@ class SmsContextTest extends TestCase
             ->addBodyContext('timestamp', '2025-01-01 12:00:00');
 
         $this->assertSame($this->context, $result);
-        // @phpstan-ignore-next-line
         $this->assertSame('sms@example.com', $this->context->getFrom()->getAddress());
         $this->assertCount(1, $this->context->getRecipients());
-        // @phpstan-ignore-next-line
         $this->assertSame('user@sms.example.com', $this->context->getRecipients()[0]->getAddress());
         $this->assertSame('SMS Alert', $this->context->getSubject());
         $this->assertSame('alert_sms', $this->context->getTextTemplate());
@@ -269,18 +260,13 @@ class SmsContextTest extends TestCase
             ]);
 
         // Verify all properties are set correctly
-        // @phpstan-ignore-next-line
         $this->assertSame('security@sms.example.com', $this->context->getFrom()->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('Security Service', $this->context->getFrom()->getName());
 
         $recipients = $this->context->getRecipients();
         $this->assertCount(2, $recipients);
-        // @phpstan-ignore-next-line
         $this->assertSame('user1@sms.example.com', $recipients[0]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('user2@sms.example.com', $recipients[1]->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('John Doe', $recipients[1]->getName());
 
         $this->assertSame('Security Alert', $this->context->getSubject());
@@ -316,9 +302,7 @@ class SmsContextTest extends TestCase
             ->addBodyContext('expiryMinutes', 5)
             ->addBodyContext('serviceName', 'MyApp');
 
-        // @phpstan-ignore-next-line
         $this->assertSame('service@sms.example.com', $this->context->getFrom()->getAddress());
-        // @phpstan-ignore-next-line
         $this->assertSame('user@sms.example.com', $this->context->getRecipients()[0]->getAddress());
         $this->assertSame('verification_code', $this->context->getTextTemplate());
 
