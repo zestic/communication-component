@@ -10,6 +10,9 @@ Overview of the Communication Component and its core features.
 ### [Getting Started](getting-started.md)
 Step-by-step guide to set up and configure the component for basic email communication.
 
+### [Configuration Reference](configuration.md)
+Comprehensive reference for all configuration options, environment variables, and settings.
+
 ### [Communication Definitions](communication-definitions.md)
 Learn how to create and use communication definitions to structure different types of communications.
 

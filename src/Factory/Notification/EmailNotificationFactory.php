@@ -18,9 +18,9 @@ final class EmailNotificationFactory implements NotificationFactoryInterface
     ) {
     }
 
-    public function create(EmailContext|CommunicationContextInterface $emailContext): Notification
+    public function create(EmailContext|CommunicationContextInterface $communicationContext): Notification
     {
-        $emailMessage = $this->emailMessageFactory->createMessage($emailContext);
+        $emailMessage = $this->emailMessageFactory->createMessage($communicationContext);
 
         if (!$emailMessage instanceof EmailMessage) {
             throw new \RuntimeException('Expected EmailMessage, got ' . get_class($emailMessage));

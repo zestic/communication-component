@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Communication\Application\Factory\Entity;
+namespace Communication\Factory\Entity;
 
 use Communication\Context\CommunicationContext;
 use Communication\Entity\Communication;
