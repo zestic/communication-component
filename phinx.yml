@@ -5,32 +5,35 @@ paths:
 environments:
     default_migration_table: phinxlog
     default_environment: development
-    
+
     production:
         adapter: pgsql
         host: '${DB_HOST:-localhost}'
         name: '${DB_NAME:-communication_production}'
         user: '${DB_USER:-postgres}'
         pass: '${DB_PASSWORD:-postgres}'
-        port: '${DB_PORT:-5432}'
+        port: '${POSTGRES_TEST_PORT}'
         charset: utf8
-    
+        schema: '${POSTGRES_SCHEMA:-communication_component}'
+
     development:
         adapter: pgsql
-        host: '${DB_HOST:-localhost}'
+        host: ${POSTGRES_TEST_HOST}
         name: '${DB_NAME:-communication_development}'
         user: '${DB_USER:-postgres}'
         pass: '${DB_PASSWORD:-postgres}'
-        port: '${DB_PORT:-5432}'
+        port: ${POSTGRES_TEST_PORT}
         charset: utf8
-    
+        schema: '${POSTGRES_SCHEMA:-communication_component}'
+
     testing:
         adapter: pgsql
-        host: '${DB_HOST:-localhost}'
-        name: '${DB_NAME:-communication_test}'
-        user: '${DB_USER:-postgres}'
-        pass: '${DB_PASSWORD:-postgres}'
-        port: '${DB_PORT:-5432}'
+        host: localhost
+        name: test
+        user: test
+        pass: password1
+        port: 5432
         charset: utf8
+        schema: communication_component
 
 version_order: creation

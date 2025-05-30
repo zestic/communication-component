@@ -29,12 +29,13 @@
     "twig/twig": "^3.0"
   },
   "require-dev": {
-    "symfony/amazon-mailer": "^6.4 || ^7.0",
-    "phpunit/phpunit": "^10.5",
+    "friendsofphp/php-cs-fixer": "^3.75",
     "mockery/mockery": "^1.6",
-    "symfony/var-dumper": "^6.4 || ^7.0",
     "phpstan/phpstan": "^1.10",
-    "friendsofphp/php-cs-fixer": "^3.75"
+    "phpunit/phpunit": "^10.5",
+    "symfony/amazon-mailer": "^6.4 || ^7.0",
+    "symfony/dotenv": "7.3.x-dev",
+    "symfony/var-dumper": "^6.4 || ^7.0"
   },
   "scripts": {
     "test": "phpunit",
@@ -58,6 +59,7 @@
     "psr-4": {
       "Tests\\Fixture\\": "tests/_support/Fixture",
       "Tests\\Functional\\": "tests/functional",
+      "Tests\\Integration\\": "tests/Integration",
       "Tests\\Unit\\": "tests/unit"
     }
   }
