@@ -58,6 +58,14 @@ jobs:
           POSTGRES_DB=communication_test
           POSTGRES_PORT=5432
           POSTGRES_DSN=pgsql:host=localhost;port=5432;dbname=communication_test;options='--search_path=communication_component'
+
+          # PostgreSQL test configuration (used by integration tests)
+          POSTGRES_TEST_HOST=localhost
+          POSTGRES_TEST_USER=postgres
+          POSTGRES_TEST_PASSWORD=postgres
+          POSTGRES_TEST_DB=communication_test
+          POSTGRES_TEST_PORT=5432
+          POSTGRES_TEST_SCHEMA=communication_component
           EOL
 
       - name: Set up database schema
