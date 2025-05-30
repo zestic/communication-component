@@ -28,12 +28,12 @@ environments:
 
     testing:
         adapter: pgsql
-        host: localhost
-        name: test
-        user: test
-        pass: password1
-        port: 5432
+        host: '${DB_HOST:-localhost}'
+        name: '${DB_NAME:-communication_test}'
+        user: '${DB_USER:-postgres}'
+        pass: '${DB_PASSWORD:-postgres}'
+        port: '${DB_PORT:-5432}'
         charset: utf8
-        schema: communication_component
+        schema: '${POSTGRES_SCHEMA:-communication_component}'
 
 version_order: creation
