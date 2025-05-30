@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Communication;
 
-use Communication\Application\Factory\ChannelContextFactoryFactory;
+use Communication\Application\Factory\Factory\Context\ChannelContextFactoryFactory;
+use Communication\Application\Factory\Interactor\SendCommunicationFactory;
 use Communication\Command\SendTestEmailCommand;
 use Communication\Context\EmailContext;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
@@ -14,7 +15,6 @@ use Communication\Factory\Channel\EmailChannelFactory;
 use Communication\Factory\Context\ChannelContextFactory;
 use Communication\Factory\EmailBusLocatorFactory;
 use Communication\Factory\EventDispatcherFactory;
-use Communication\Factory\Interactor\SendCommunicationFactory;
 use Communication\Factory\Legacy\CommunicationFactory;
 use Communication\Factory\MessageHandlerFactory;
 use Communication\Factory\Notification\EmailNotificationFactory;
@@ -108,11 +108,11 @@ class ConfigProvider
                 new EmailBusLocatorFactory(
                     'communication.bus.email'
                 ),
+                BodyRenderer::class => BodyRendererFactory::class,
                 ChannelContextFactory::class => ChannelContextFactoryFactory::class,
+                Environment::class => TwigEnvironmentFactory::class,
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
                 NotifierInterface::class => NotifierFactory::class,
-                BodyRenderer::class => BodyRendererFactory::class,
-                Environment::class => TwigEnvironmentFactory::class,
                 SendCommunication::class => SendCommunicationFactory::class,
                 TwigExtension::class => TwigExtensionFactory::class,
             ],
