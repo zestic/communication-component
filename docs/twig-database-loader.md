@@ -64,38 +64,38 @@ $twig = new Environment($chainLoader, [
 
 ## Template Naming Convention
 
-The `TwigDatabaseLoader` uses a specific naming convention for templates:
+The `TwigDatabaseLoader` uses standard Twig naming conventions for templates:
 
-- **Format**: `template_name:channel`
+- **Format**: `template_name.extension.twig`
 - **Examples**:
-  - `welcome:email` - Welcome template for email channel
-  - `notification:mobile` - Notification template for mobile channel
-  - `invoice:email` - Invoice template for email channel
+  - `welcome.html.twig` - Welcome template for HTML content
+  - `notification.text.twig` - Notification template for text content
+  - `invoice.html.twig` - Invoice template for HTML content
 
-If no channel is specified, it defaults to `email`:
+Templates are searched by their full name including the extension:
 
 ```php
-// These are equivalent:
-$twig->render('welcome:email', $context);
-$twig->render('welcome', $context);  // Defaults to email channel
+// Render templates by their full names:
+$twig->render('welcome.html.twig', $context);
+$twig->render('notification.text.twig', $context);
 ```
 
 ## Template Inheritance and Includes
 
-The loader supports Twig template inheritance and includes. When using `{% extends %}` or `{% include %}`, you can reference templates in several ways:
+The loader supports Twig template inheritance and includes. When using `{% extends %}` or `{% include %}`, you can reference templates by their full names:
 
 ```twig
-{# Extend a template in the same channel #}
-{% extends "base" %}
+{# Extend a base template #}
+{% extends "base.html.twig" %}
 
-{# Extend a template in a specific channel #}
-{% extends "base:email" %}
+{# Extend a layout template #}
+{% extends "email_layout.html.twig" %}
 
 {# Include a template #}
-{% include "header:email" %}
+{% include "header.html.twig" %}
 
 {# Include with fallback #}
-{% include "custom-header" ignore missing %}
+{% include "custom-header.html.twig" ignore missing %}
 ```
 
 ## Caching and Performance
@@ -133,8 +133,8 @@ When using with the Communication Component, templates are automatically loaded 
 ```php
 // Email context will use database templates
 $emailContext = new EmailContext();
-$emailContext->setHtmlTemplate('welcome'); // Loads 'welcome:email' from database
-$emailContext->setTextTemplate('welcome'); // Loads 'welcome:email' text version
+$emailContext->setHtmlTemplate('welcome.html.twig'); // Loads 'welcome.html.twig' from database
+$emailContext->setTextTemplate('welcome.text.twig'); // Loads 'welcome.text.twig' from database
 
 // Send communication
 $communication = new Communication('user.welcome', $emailContext);

@@ -94,13 +94,8 @@ class TwigDatabaseLoader implements LoaderInterface
             return $this->cache[$name];
         }
 
-        // Parse name to get template name and channel
-        // Expected format: "template_name:channel"
-        $parts = explode(':', $name);
-        $templateName = $parts[0];
-        $channel = $parts[1] ?? 'email';
-
-        $template = $this->templateRepository->findByNameAndChannel($templateName, $channel);
+        // Search by template name directly (e.g., "generic.html.twig")
+        $template = $this->templateRepository->findByName($name);
         if ($template) {
             $this->cache[$name] = $template;
         }
@@ -122,13 +117,7 @@ class TwigDatabaseLoader implements LoaderInterface
             foreach ($patterns as $pattern) {
                 if (preg_match_all($pattern, $content, $matches)) {
                     foreach ($matches[1] as $depName) {
-                        // Handle both formats: just name or name:channel
-                        if (!str_contains($depName, ':')) {
-                            // Use the same channel as the parent template
-                            $parts = explode(':', $name);
-                            $channel = $parts[1] ?? 'email';
-                            $depName .= ':' . $channel;
-                        }
+                        // Use template name directly (e.g., "base.html.twig")
                         $this->dependencies[$name][] = $depName;
                     }
                 }

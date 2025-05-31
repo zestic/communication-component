@@ -37,9 +37,9 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
     {
         $template = new Template(
             'template123',
-            'welcome',
+            'welcome.html.twig',
             'email',
-            '{% extends "base" %}{% block content %}Hello {{ name }}{% endblock %}',
+            '{% extends "base.html.twig" %}{% block content %}Hello {{ name }}{% endblock %}',
             'text/html',
             'Welcome!',
             [],
@@ -47,14 +47,14 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
             new DateTimeImmutable('2025-01-01 12:00:00')
         );
 
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('welcome', 'email')
+            ->with('welcome.html.twig')
             ->andReturn($template);
 
-        $source = $this->loader->getSourceContext('welcome:email');
+        $source = $this->loader->getSourceContext('welcome.html.twig');
 
-        $this->assertSame('welcome:email', $source->getName());
+        $this->assertSame('welcome.html.twig', $source->getName());
         $this->assertSame($template->getContent(), $source->getCode());
     }
 
@@ -67,9 +67,9 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
     {
         $childTemplate = new Template(
             'template123',
-            'welcome',
+            'welcome.html.twig',
             'email',
-            '{% extends "base" %}{% block content %}Hello {{ name }}{% endblock %}',
+            '{% extends "base.html.twig" %}{% block content %}Hello {{ name }}{% endblock %}',
             'text/html',
             'Welcome!',
             [],
@@ -79,7 +79,7 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
 
         $baseTemplate = new Template(
             'base123',
-            'base',
+            'base.html.twig',
             'email',
             '<!DOCTYPE html><html><body>{% block content %}{% endblock %}</body></html>',
             'text/html',
@@ -89,23 +89,23 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
             new DateTimeImmutable('2025-01-01 12:00:00')
         );
 
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('welcome', 'email')
+            ->with('welcome.html.twig')
             ->andReturn($childTemplate);
 
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('base', 'email')
+            ->with('base.html.twig')
             ->andReturn($baseTemplate);
 
-        $source = $this->loader->getSourceContext('welcome:email');
-        $this->assertSame('welcome:email', $source->getName());
+        $source = $this->loader->getSourceContext('welcome.html.twig');
+        $this->assertSame('welcome.html.twig', $source->getName());
         $this->assertSame($childTemplate->getContent(), $source->getCode());
 
         // Test that base template is also accessible
-        $baseSource = $this->loader->getSourceContext('base:email');
-        $this->assertSame('base:email', $baseSource->getName());
+        $baseSource = $this->loader->getSourceContext('base.html.twig');
+        $this->assertSame('base.html.twig', $baseSource->getName());
         $this->assertSame($baseTemplate->getContent(), $baseSource->getCode());
     }
 
@@ -115,15 +115,15 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
      */
     public function testTemplateNotFound(): void
     {
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('nonexistent', 'email')
+            ->with('nonexistent.html.twig')
             ->andReturnNull();
 
         $this->expectException(LoaderError::class);
-        $this->expectExceptionMessage('Template "nonexistent:email" does not exist.');
+        $this->expectExceptionMessage('Template "nonexistent.html.twig" does not exist.');
 
-        $this->loader->getSourceContext('nonexistent:email');
+        $this->loader->getSourceContext('nonexistent.html.twig');
     }
 
     /**
@@ -138,7 +138,7 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
     {
         $template = new Template(
             'template123',
-            'welcome',
+            'welcome.html.twig',
             'email',
             'Hello {{ name }}',
             'text/html',
@@ -148,14 +148,14 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
             new DateTimeImmutable('2025-01-01 12:00:00')
         );
 
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('welcome', 'email')
+            ->with('welcome.html.twig')
             ->andReturn($template);
 
-        $cacheKey = $this->loader->getCacheKey('welcome:email');
+        $cacheKey = $this->loader->getCacheKey('welcome.html.twig');
         $this->assertStringContainsString('template123', $cacheKey);
-        $this->assertStringContainsString('welcome', $cacheKey);
+        $this->assertStringContainsString('welcome.html.twig', $cacheKey);
         $this->assertStringContainsString((string)$template->getUpdatedAt()->getTimestamp(), $cacheKey);
     }
 
@@ -167,7 +167,7 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
     {
         $template = new Template(
             'template123',
-            'welcome',
+            'welcome.html.twig',
             'email',
             'Hello {{ name }}',
             'text/html',
@@ -177,18 +177,18 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
             new DateTimeImmutable('2025-01-01 12:00:00')
         );
 
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('welcome', 'email')
+            ->with('welcome.html.twig')
             ->andReturn($template);
 
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('nonexistent', 'email')
+            ->with('nonexistent.html.twig')
             ->andReturnNull();
 
-        $this->assertTrue($this->loader->exists('welcome:email'));
-        $this->assertFalse($this->loader->exists('nonexistent:email'));
+        $this->assertTrue($this->loader->exists('welcome.html.twig'));
+        $this->assertFalse($this->loader->exists('nonexistent.html.twig'));
     }
 
     /**
@@ -199,7 +199,7 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
     {
         $template = new Template(
             'template123',
-            'welcome',
+            'welcome.html.twig',
             'email',
             'Hello {{ name }}',
             'text/html',
@@ -209,15 +209,15 @@ class TwigDatabaseLoaderTest extends MockeryTestCase
             new DateTimeImmutable('2025-01-01 12:00:00')
         );
 
-        $this->repository->shouldReceive('findByNameAndChannel')
+        $this->repository->shouldReceive('findByName')
             ->once()
-            ->with('welcome', 'email')
+            ->with('welcome.html.twig')
             ->andReturn($template);
 
         // Test with a time after the template's update
-        $this->assertTrue($this->loader->isFresh('welcome:email', strtotime('2025-01-02 12:00:00')));
+        $this->assertTrue($this->loader->isFresh('welcome.html.twig', strtotime('2025-01-02 12:00:00')));
 
         // Test with a time before the template's update
-        $this->assertFalse($this->loader->isFresh('welcome:email', strtotime('2024-12-31 12:00:00')));
+        $this->assertFalse($this->loader->isFresh('welcome.html.twig', strtotime('2024-12-31 12:00:00')));
     }
 }

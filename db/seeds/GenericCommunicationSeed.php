@@ -30,7 +30,7 @@ class GenericCommunicationSeed extends AbstractSeed
         $channelDefinitions->insert([
             'communication_identifier' => 'generic.email',
             'channel' => 'email',
-            'template' => 'generic',
+            'template' => 'generic.html.twig',
             'context_schema' => json_encode([
                 'type' => 'object',
                 'required' => ['body'],
@@ -60,7 +60,7 @@ class GenericCommunicationSeed extends AbstractSeed
         $baseTemplateId = $this->generateUlid();
         $communicationTemplates->insert([
             'id' => $baseTemplateId,
-            'name' => 'base',
+            'name' => 'base.html.twig',
             'channel' => 'email',
             'subject' => null,
             'content' => $this->getBaseEmailTemplate(),
@@ -78,7 +78,7 @@ class GenericCommunicationSeed extends AbstractSeed
         $layoutTemplateId = $this->generateUlid();
         $communicationTemplates->insert([
             'id' => $layoutTemplateId,
-            'name' => 'email_layout',
+            'name' => 'email_layout.html.twig',
             'channel' => 'email',
             'subject' => null,
             'content' => $this->getEmailLayoutTemplate(),
@@ -87,7 +87,7 @@ class GenericCommunicationSeed extends AbstractSeed
                 'description' => 'Email layout template with email-specific structure',
                 'version' => '1.0',
                 'level' => 'layout',
-                'extends' => 'base'
+                'extends' => 'base.html.twig'
             ]),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
@@ -97,7 +97,7 @@ class GenericCommunicationSeed extends AbstractSeed
         $genericTemplateId = $this->generateUlid();
         $communicationTemplates->insert([
             'id' => $genericTemplateId,
-            'name' => 'generic',
+            'name' => 'generic.html.twig',
             'channel' => 'email',
             'subject' => 'Generic Email',
             'content' => $this->getGenericEmailTemplate(),
@@ -106,7 +106,7 @@ class GenericCommunicationSeed extends AbstractSeed
                 'description' => 'Generic email template with a simple body variable',
                 'version' => '1.0',
                 'level' => 'template',
-                'extends' => 'email_layout'
+                'extends' => 'email_layout.html.twig'
             ]),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
@@ -233,7 +233,7 @@ TWIG;
     private function getEmailLayoutTemplate(): string
     {
         return <<<TWIG
-{% extends 'base:email' %}
+{% extends 'base.html.twig' %}
 
 {% block stylesheets %}
 {{ parent() }}
@@ -303,7 +303,7 @@ TWIG;
     private function getGenericEmailTemplate(): string
     {
         return <<<TWIG
-{% extends 'email_layout:email' %}
+{% extends 'email_layout.html.twig' %}
 
 {% block subject %}{{ subject }}{% endblock %}
 

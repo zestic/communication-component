@@ -45,7 +45,7 @@ final class GenericCommunication extends Communication
     {
         return [
             'email' => [
-                'html' => 'generic',
+                'html' => 'generic.html.twig',
             ],
         ];
     }
