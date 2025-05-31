@@ -47,26 +47,66 @@ class GenericCommunicationSeed extends AbstractSeed
                 ]
             ]),
             'channel_config' => json_encode([
-                'from_address' => 'noreply@example.com',
-                'reply_to' => 'support@example.com'
+                'from_address' => $_ENV['COMMUNICATION_FROM_EMAIL'] ?? 'noreply@example.com',
+                'reply_to' => $_ENV['COMMUNICATION_REPLY_EMAIL'] ?? $_ENV['COMMUNICATION_FROM_EMAIL'] ?? 'support@example.com',
             ]),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         ])->save();
 
-        // Create a template for the generic email
-        $templateId = $this->generateUlid();
         $communicationTemplates = $this->table('communication_templates');
+
+        // Create base email template (level 1 - base)
+        $baseTemplateId = $this->generateUlid();
         $communicationTemplates->insert([
-            'id' => $templateId,
+            'id' => $baseTemplateId,
+            'name' => 'base',
+            'channel' => 'email',
+            'subject' => null,
+            'content' => $this->getBaseEmailTemplate(),
+            'content_type' => 'text/html',
+            'metadata' => json_encode([
+                'description' => 'Base email template with common HTML structure and styling',
+                'version' => '1.0',
+                'level' => 'base'
+            ]),
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ])->save();
+
+        // Create email layout template (level 2 - layout)
+        $layoutTemplateId = $this->generateUlid();
+        $communicationTemplates->insert([
+            'id' => $layoutTemplateId,
+            'name' => 'email_layout',
+            'channel' => 'email',
+            'subject' => null,
+            'content' => $this->getEmailLayoutTemplate(),
+            'content_type' => 'text/html',
+            'metadata' => json_encode([
+                'description' => 'Email layout template with email-specific structure',
+                'version' => '1.0',
+                'level' => 'layout',
+                'extends' => 'base'
+            ]),
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ])->save();
+
+        // Create generic email template (level 3 - specific template)
+        $genericTemplateId = $this->generateUlid();
+        $communicationTemplates->insert([
+            'id' => $genericTemplateId,
             'name' => 'generic',
             'channel' => 'email',
             'subject' => 'Generic Email',
             'content' => $this->getGenericEmailTemplate(),
             'content_type' => 'text/html',
             'metadata' => json_encode([
-                'description' => 'A generic email template with a simple body variable',
-                'version' => '1.0'
+                'description' => 'Generic email template with a simple body variable',
+                'version' => '1.0',
+                'level' => 'template',
+                'extends' => 'email_layout'
             ]),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
@@ -105,82 +145,172 @@ class GenericCommunicationSeed extends AbstractSeed
     }
 
     /**
-     * Get the HTML template for the generic email
+     * Get the base HTML template (Level 1 - Base)
      *
-     * This returns a Twig template that can handle the body variable and any additional data
+     * This provides the common HTML structure and basic styling for all email templates
      */
-    private function getGenericEmailTemplate(): string
+    private function getBaseEmailTemplate(): string
     {
         return <<<TWIG
-{% block subject %}{{ subject }}{% endblock %}
-
-{% block body_html %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ subject|default('Generic Email') }}</title>
+    <title>{% block title %}{{ subject|default('Email') }}{% endblock %}</title>
+    {% block stylesheets %}
     <style>
+        /* Base styles for all emails */
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .email-container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            background-color: #ffffff;
         }
-        .content {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        .email-header {
             padding: 20px;
-            margin-top: 20px;
+            background-color: #ffffff;
         }
-        .footer {
+        .email-footer {
             margin-top: 20px;
+            padding: 20px;
             font-size: 12px;
             color: #777;
             text-align: center;
-        }
-        .additional-info {
-            margin-top: 15px;
-            padding-top: 15px;
+            background-color: #f9f9f9;
             border-top: 1px solid #eee;
-            font-size: 13px;
+        }
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+            .email-header, .email-footer {
+                padding: 15px !important;
+            }
         }
     </style>
+    {% endblock %}
 </head>
 <body>
-    <div class="content">
-        {{ body|raw }}
+    <div class="email-container">
+        {% block body %}
+            {% block header %}
+            <div class="email-header">
+                {% block header_content %}{% endblock %}
+            </div>
+            {% endblock %}
 
+            {% block content %}{% endblock %}
+
+            {% block footer %}
+            <div class="email-footer">
+                {% block footer_content %}
+                <p>This is an automated message. Please do not reply to this email.</p>
+                <p>© {{ "now"|date("Y") }} Your Company. All rights reserved.</p>
+                {% endblock %}
+            </div>
+            {% endblock %}
+        {% endblock %}
+    </div>
+</body>
+</html>
+TWIG;
+    }
+
+    /**
+     * Get the email layout template (Level 2 - Layout)
+     *
+     * This extends the base template and provides email-specific content structure
+     */
+    private function getEmailLayoutTemplate(): string
+    {
+        return <<<TWIG
+{% extends 'base:email' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Email-specific layout styles */
+    .email-content {
+        padding: 20px;
+    }
+    .content-section {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .additional-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 13px;
+        color: #666;
+    }
+    .additional-info p {
+        margin: 5px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="email-content">
+    {% block email_content %}
+    <div class="content-section">
+        {% block main_content %}{% endblock %}
+
+        {% block additional_info %}
         {% if additionalData is defined and additionalData %}
             <div class="additional-info">
                 {% if additionalData.timestamp is defined %}
-                    <p>Sent on: {{ additionalData.timestamp }}</p>
+                    <p><strong>Sent on:</strong> {{ additionalData.timestamp }}</p>
                 {% endif %}
 
                 {% if additionalData.sender is defined %}
-                    <p>From: {{ additionalData.sender }}</p>
+                    <p><strong>From:</strong> {{ additionalData.sender }}</p>
                 {% endif %}
 
                 {# Loop through any other additional data #}
                 {% for key, value in additionalData %}
                     {% if key != 'timestamp' and key != 'sender' %}
-                        <p>{{ key|title }}: {{ value }}</p>
+                        <p><strong>{{ key|title }}:</strong> {{ value }}</p>
                     {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
+        {% endblock %}
     </div>
+    {% endblock %}
+</div>
+{% endblock %}
+TWIG;
+    }
 
-    <div class="footer">
-        <p>This is an automated message. Please do not reply to this email.</p>
-        <p>© {{ "now"|date("Y") }} Your Company. All rights reserved.</p>
-    </div>
-</body>
-</html>
+    /**
+     * Get the HTML template for the generic email (Level 3 - Specific Template)
+     *
+     * This extends the email layout and provides the specific content for generic emails
+     */
+    private function getGenericEmailTemplate(): string
+    {
+        return <<<TWIG
+{% extends 'email_layout:email' %}
+
+{% block subject %}{{ subject }}{% endblock %}
+
+{% block title %}{{ subject|default('Generic Email') }}{% endblock %}
+
+{% block main_content %}
+{{ body|raw }}
 {% endblock %}
 
 {% block body_text %}
