@@ -28,8 +28,9 @@ abstract class IntegrationTestCase extends TestCase
         // Load environment variables from .env.test file if it exists (for test-specific overrides)
         $testEnvFile = __DIR__ . '/../../.env.test';
         if (file_exists($testEnvFile)) {
-            $dotenv = new Dotenv();
-            $dotenv->load($testEnvFile);
+            (new Dotenv())
+                ->usePutenv(true)
+                ->loadEnv($testEnvFile);
         }
     }
 }
