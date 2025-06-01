@@ -79,6 +79,48 @@ class PdoTemplateRepositoryTest extends MockeryTestCase
     }
 
     /**
+     * @covers \Communication\Template\PdoTemplateRepository::findByName
+     * @covers \Communication\Template\PdoTemplateRepository::hydrate
+     * @covers \Communication\Template\PdoTemplateRepository::decodeMetadata
+     */
+    public function testFindByName(): void
+    {
+        $stmt = Mockery::mock(PDOStatement::class);
+        $stmt->shouldReceive('execute')
+            ->once()
+            ->with(['name' => 'welcome.html.twig'])
+            ->andReturnTrue();
+
+        $stmt->shouldReceive('fetch')
+            ->once()
+            ->andReturn([
+                'id' => 'template123',
+                'name' => 'welcome.html.twig',
+                'channel' => 'email',
+                'subject' => 'Welcome!',
+                'content' => 'Hello {{ name }}',
+                'content_type' => 'text/html',
+                'metadata' => json_encode(['category' => 'onboarding']),
+                'created_at' => '2025-01-01 12:00:00',
+                'updated_at' => '2025-01-01 12:00:00',
+            ]);
+
+        $this->pdo->shouldReceive('prepare')
+            ->once()
+            ->andReturn($stmt);
+
+        $template = $this->repository->findByName('welcome.html.twig');
+
+        $this->assertInstanceOf(Template::class, $template);
+        $this->assertSame('template123', $template->getId());
+        $this->assertSame('welcome.html.twig', $template->getName());
+        $this->assertSame('email', $template->getChannel());
+        $this->assertSame('Welcome!', $template->getSubject());
+        $this->assertSame('Hello {{ name }}', $template->getContent());
+        $this->assertSame(['category' => 'onboarding'], $template->getMetadata());
+    }
+
+    /**
      * @covers \Communication\Template\PdoTemplateRepository::save
      * @covers \Communication\Template\PdoTemplateRepository::encodeMetadata
      * @covers \Communication\Template\PdoTemplateRepository::formatDateTime

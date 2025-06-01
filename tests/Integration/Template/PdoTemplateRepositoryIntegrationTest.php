@@ -172,6 +172,55 @@ class PdoTemplateRepositoryIntegrationTest extends IntegrationTestCase
     }
 
     /**
+     * @covers \Communication\Template\PdoTemplateRepository::findByName
+     */
+    public function testFindByName(): void
+    {
+        // Create templates with new naming format
+        $template1 = new Template(
+            'template123',
+            'welcome.html.twig',
+            'email',
+            'Hello {{ name }}',
+            'text/html',
+            'Welcome!',
+            ['category' => 'onboarding'],
+            new DateTimeImmutable('2025-01-01 12:00:00'),
+            new DateTimeImmutable('2025-01-01 12:00:00')
+        );
+
+        $template2 = new Template(
+            'template456',
+            'generic.html.twig',
+            'email',
+            'Generic content {{ body }}',
+            'text/html',
+            'Generic Email',
+            ['category' => 'generic'],
+            new DateTimeImmutable('2025-01-01 12:00:00'),
+            new DateTimeImmutable('2025-01-01 12:00:00')
+        );
+
+        $this->repository->save($template1);
+        $this->repository->save($template2);
+
+        // Test finding by name only (new behavior for TwigDatabaseLoader)
+        $retrieved1 = $this->repository->findByName('welcome.html.twig');
+        $this->assertNotNull($retrieved1);
+        $this->assertSame('template123', $retrieved1->getId());
+        $this->assertSame('welcome.html.twig', $retrieved1->getName());
+
+        $retrieved2 = $this->repository->findByName('generic.html.twig');
+        $this->assertNotNull($retrieved2);
+        $this->assertSame('template456', $retrieved2->getId());
+        $this->assertSame('generic.html.twig', $retrieved2->getName());
+
+        // Test non-existent template
+        $nonexistent = $this->repository->findByName('nonexistent.html.twig');
+        $this->assertNull($nonexistent);
+    }
+
+    /**
      * @covers \Communication\Template\PdoTemplateRepository::delete
      * @covers \Communication\Template\PdoTemplateRepository::findByNameAndChannel
      */
