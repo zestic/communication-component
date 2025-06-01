@@ -27,10 +27,6 @@ class SendCommunicationFactory
             throw new \RuntimeException('Invalid configuration: missing or invalid communication.channel configuration');
         }
 
-        if (!isset($commConfig['context']) || !is_array($commConfig['context'])) {
-            throw new \RuntimeException('Invalid configuration: missing or invalid communication.context configuration');
-        }
-
         $definitionRepository = $container->get(CommunicationDefinitionRepositoryInterface::class);
         assert($definitionRepository instanceof CommunicationDefinitionRepositoryInterface);
 

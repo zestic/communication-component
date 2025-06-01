@@ -43,19 +43,7 @@ class TwigDatabaseLoader implements LoaderInterface
             throw new LoaderError(sprintf('Template "%s" does not exist.', $name));
         }
 
-        // Include dependencies in cache key to ensure proper cache invalidation
-        $key = $template->getId() . '_' . $template->getName() . '_' . $template->getUpdatedAt()->getTimestamp();
-
-        // Add dependency timestamps to cache key
-        if (isset($this->dependencies[$name])) {
-            foreach ($this->dependencies[$name] as $depName) {
-                if ($depTemplate = $this->findTemplate($depName)) {
-                    $key .= '_' . $depTemplate->getUpdatedAt()->getTimestamp();
-                }
-            }
-        }
-
-        return $key;
+        return $template->getId() . '/' . $template->getName() . '/' . $template->getUpdatedAt()->getTimestamp();
     }
 
     public function isFresh(string $name, int $time): bool
@@ -94,7 +82,6 @@ class TwigDatabaseLoader implements LoaderInterface
             return $this->cache[$name];
         }
 
-        // Search by template name directly (e.g., "generic.html.twig")
         $template = $this->templateRepository->findByName($name);
         if ($template) {
             $this->cache[$name] = $template;

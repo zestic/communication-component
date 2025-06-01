@@ -15,8 +15,7 @@ class EmailMessageFactory implements MessageFactoryInterface
 {
     public function __construct(
         private BodyRenderer $renderer,
-    ) {
-    }
+    ) {}
 
     public function createMessage(
         EmailContext|CommunicationContextInterface $emailContext,
@@ -25,10 +24,10 @@ class EmailMessageFactory implements MessageFactoryInterface
             ->context($emailContext->getBodyContext())
             ->subject($emailContext->getSubject());
         if ($template = $emailContext->getHtmlTemplate()) {
-            $email->htmlTemplate("$template.html.twig");
+            $email->htmlTemplate($template);
         }
         if ($template = $emailContext->getTextTemplate()) {
-            $email->textTemplate("$template.text.twig");
+            $email->textTemplate($template);
         }
         foreach ($emailContext->getBcc() as $bcc) {
             $email->addBcc($bcc);

@@ -31,19 +31,14 @@ class SendCommunication
             $communication = $this->communicationFactory->create($communication);
         }
 
-        // Get the communication definition
         $definition = $this->definitionRepository->findByIdentifier($communication->getDefinitionId());
         if (!$definition) {
             throw new \RuntimeException("Communication definition not found: {$communication->getDefinitionId()}");
         }
 
-        // Validate contexts against definition schemas
         $this->validateContexts($communication, $definition);
-
-        // Apply templates from definition
         $this->applyTemplates($communication, $definition);
 
-        // Send to each recipient
         foreach ($communication->getRecipients() as $recipient) {
             $this->sendToRecipient($recipient, $communication, $definition);
         }
