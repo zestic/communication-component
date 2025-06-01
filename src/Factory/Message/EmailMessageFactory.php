@@ -15,7 +15,8 @@ class EmailMessageFactory implements MessageFactoryInterface
 {
     public function __construct(
         private BodyRenderer $renderer,
-    ) {}
+    ) {
+    }
 
     public function createMessage(
         EmailContext|CommunicationContextInterface $emailContext,

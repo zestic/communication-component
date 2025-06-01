@@ -23,7 +23,8 @@ class SendCommunication
         private readonly array $notificationFactories,
         private readonly NotifierInterface $notifier,
         private readonly CommunicationFactory $communicationFactory,
-    ) {}
+    ) {
+    }
 
     public function send(Communication|array $communication): void
     {
