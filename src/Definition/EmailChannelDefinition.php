@@ -10,7 +10,7 @@ class EmailChannelDefinition extends AbstractChannelDefinition implements EmailC
         string $template,
         array $contextSchema,
         array $subjectSchema,
-        private string $fromAddress,
+        private ?string $fromAddress = null,
         private ?string $replyTo = null,
         private int $priority = 0,
         private bool $requiresAuth = false
@@ -18,7 +18,7 @@ class EmailChannelDefinition extends AbstractChannelDefinition implements EmailC
         parent::__construct('email', $template, $contextSchema, $subjectSchema);
     }
 
-    public function getFromAddress(): string
+    public function getFromAddress(): ?string
     {
         return $this->fromAddress;
     }

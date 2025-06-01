@@ -6,7 +6,7 @@ namespace Communication\Definition;
 
 interface EmailChannelDefinitionInterface extends ChannelDefinition
 {
-    public function getFromAddress(): string;
+    public function getFromAddress(): ?string;
 
     public function getReplyTo(): ?string;
 }
