@@ -6,18 +6,7 @@ use Phinx\Migration\AbstractMigration;
 
 final class CreateCommunicationDefinitions extends AbstractMigration
 {
-    /**
-     * Change Method.
-     *
-     * Write your reversible migrations using this method.
-     *
-     * More information on writing migrations is available here:
-     * https://book.cakephp.org/phinx/0/en/migrations.html#the-change-method
-     *
-     * Remember to call "create()" or "update()" and NOT "save()" when working
-     * with the Table class.
-     */
-    public function change(): void
+    public function up(): void
     {
         // Create communication_definitions table
         $communicationDefinitions = $this->table('communication_definitions', ['id' => false, 'primary_key' => 'identifier']);
@@ -45,16 +34,8 @@ final class CreateCommunicationDefinitions extends AbstractMigration
             ->addIndex(['communication_identifier', 'channel'], ['unique' => true])
             ->create();
 
-        // Create trigger for updating updated_at column
+        // Create triggers for updating updated_at column (function should already exist)
         $this->execute("
-            CREATE OR REPLACE FUNCTION update_updated_at_column()
-            RETURNS TRIGGER AS $$
-            BEGIN
-                NEW.updated_at = CURRENT_TIMESTAMP;
-                RETURN NEW;
-            END;
-            $$ language 'plpgsql';
-
             CREATE TRIGGER update_communication_definitions_updated_at
                 BEFORE UPDATE ON communication_definitions
                 FOR EACH ROW
@@ -65,5 +46,11 @@ final class CreateCommunicationDefinitions extends AbstractMigration
                 FOR EACH ROW
                 EXECUTE FUNCTION update_updated_at_column();
         ");
+    }
+
+    public function down(): void
+    {
+        $this->table('channel_definitions')->drop()->save();
+        $this->table('communication_definitions')->drop()->save();
     }
 }
