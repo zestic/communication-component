@@ -76,13 +76,28 @@ class TwigDatabaseLoader implements LoaderInterface
         return $this->findTemplate($name) !== null;
     }
 
+    private function findNamespacedTemplate(string $name): ?TemplateInterface
+    {
+        $parts = explode('/', $name, 2);
+        if (count($parts) === 2) {
+            $channel = substr($parts[0], 1); // Remove the @ prefix
+            $templateName = $parts[1];
+            return $this->templateRepository->findByNameAndChannel($templateName, $channel);
+        }
+
+        return null;
+    }
+
     private function findTemplate(string $name): ?TemplateInterface
     {
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
         }
 
-        $template = $this->templateRepository->findByName($name);
+        $template = str_starts_with($name, '@') ?
+            $this->findNamespacedTemplate($name) :
+            $this->templateRepository->findByName($name);
+
         if ($template) {
             $this->cache[$name] = $template;
         }
