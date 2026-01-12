@@ -11,7 +11,7 @@ final class CreateCommunicationTemplates extends AbstractMigration
         // Create communication_templates table
         $communicationTemplates = $this->table('communication_templates', ['id' => false, 'primary_key' => 'id']);
         $communicationTemplates
-            ->addColumn('id', 'string', ['limit' => 26])
+            ->addColumn('id', 'uuid')
             ->addColumn('name', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('channel', 'string', ['limit' => 50, 'null' => false])
             ->addColumn('subject', 'string', ['limit' => 255, 'null' => true])
@@ -22,6 +22,9 @@ final class CreateCommunicationTemplates extends AbstractMigration
             ->addColumn('updated_at', 'timestamp', ['timezone' => true, 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
             ->addIndex(['name', 'channel'], ['unique' => true])
             ->create();
+
+        // Set UUID default
+        $this->execute('ALTER TABLE communication_templates ALTER COLUMN id SET DEFAULT gen_random_uuid()');
 
         // Create trigger for updating updated_at column
         $this->execute("
