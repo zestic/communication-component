@@ -82,6 +82,7 @@ class TwigDatabaseLoader implements LoaderInterface
         if (count($parts) === 2) {
             $channel = substr($parts[0], 1); // Remove the @ prefix
             $templateName = $parts[1];
+
             return $this->templateRepository->findByNameAndChannel($templateName, $channel);
         }
 
