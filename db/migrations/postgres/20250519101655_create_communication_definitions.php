@@ -34,6 +34,17 @@ final class CreateCommunicationDefinitions extends AbstractMigration
             ->addIndex(['communication_identifier', 'channel'], ['unique' => true])
             ->create();
 
+        // Create or replace the update_updated_at_column function
+        $this->execute("
+            CREATE OR REPLACE FUNCTION update_updated_at_column()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.updated_at = NOW();
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        ");
+        
         // Create triggers for updating updated_at column (function should already exist)
         $this->execute("
             CREATE TRIGGER update_communication_definitions_updated_at
