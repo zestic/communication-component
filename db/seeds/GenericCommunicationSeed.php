@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Phinx\Seed\AbstractSeed;
+use Ramsey\Uuid\Uuid;
 
 class GenericCommunicationSeed extends AbstractSeed
 {
@@ -57,7 +58,7 @@ class GenericCommunicationSeed extends AbstractSeed
         $communicationTemplates = $this->table('communication_templates');
 
         // Create base email template (level 1 - base)
-        $baseTemplateId = $this->generateUlid();
+        $baseTemplateId = Uuid::uuid7();
         $communicationTemplates->insert([
             'id' => $baseTemplateId,
             'name' => 'base.html.twig',
@@ -75,7 +76,7 @@ class GenericCommunicationSeed extends AbstractSeed
         ])->save();
 
         // Create email layout template (level 2 - layout)
-        $layoutTemplateId = $this->generateUlid();
+        $layoutTemplateId = Uuid::uuid7();
         $communicationTemplates->insert([
             'id' => $layoutTemplateId,
             'name' => 'email_layout.html.twig',
@@ -94,7 +95,7 @@ class GenericCommunicationSeed extends AbstractSeed
         ])->save();
 
         // Create generic email template (level 3 - specific template)
-        $genericTemplateId = $this->generateUlid();
+        $genericTemplateId = Uuid::uuid7();
         $communicationTemplates->insert([
             'id' => $genericTemplateId,
             'name' => 'generic.html.twig',
@@ -111,37 +112,6 @@ class GenericCommunicationSeed extends AbstractSeed
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         ])->save();
-    }
-
-    /**
-     * Generate a ULID (Universally Unique Lexicographically Sortable Identifier)
-     * This is a simplified implementation for demonstration purposes
-     */
-    private function generateUlid(): string
-    {
-        $time = (string)(microtime(true) * 1000);
-        $timestamp = str_pad(base_convert($time, 10, 32), 10, '0', STR_PAD_LEFT);
-        $randomness = bin2hex(random_bytes(8));
-
-        // Convert to Crockford's base32 (using only uppercase letters and digits 0-9, excluding I, L, O, U)
-        $base32Chars = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
-        $ulid = '';
-
-        // Convert timestamp
-        for ($i = 0; $i < strlen($timestamp); $i++) {
-            $char = $timestamp[$i];
-            $index = hexdec($char);
-            $ulid .= $base32Chars[$index];
-        }
-
-        // Convert randomness
-        for ($i = 0; $i < strlen($randomness); $i++) {
-            $char = $randomness[$i];
-            $index = hexdec($char) % 32;
-            $ulid .= $base32Chars[$index];
-        }
-
-        return $ulid;
     }
 
     /**
