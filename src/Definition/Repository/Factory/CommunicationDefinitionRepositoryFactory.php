@@ -24,8 +24,10 @@ class CommunicationDefinitionRepositoryFactory
             );
         }
 
-        // Detect the database driver
         $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if (!is_string($driver) || $driver === '') {
+            throw new RuntimeException('Missing or invalid PDO driver attribute');
+        }
 
         // Normalize driver name for comparison
         $normalizedDriver = strtolower($driver);
