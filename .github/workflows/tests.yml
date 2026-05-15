@@ -34,7 +34,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost"
+          --health-cmd="mysqladmin ping --protocol=tcp -h 127.0.0.1 -u root -proot --silent"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -120,10 +120,10 @@ jobs:
 
           # MySQL setup
           # Wait for MySQL to be ready
-          for i in {1..30}; do mysqladmin ping -h localhost -u root -proot && break || sleep 1; done
+          for i in {1..30}; do mysqladmin ping --protocol=tcp -h 127.0.0.1 -u root -proot --silent && break || sleep 1; done
 
           # Create MySQL test database (already created by container but ensure it exists)
-          mysql -h localhost -u root -proot -e "CREATE DATABASE IF NOT EXISTS communication_component_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          mysql --protocol=tcp -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS communication_component_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit
