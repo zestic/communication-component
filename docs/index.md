@@ -10,6 +10,9 @@ Overview of the Communication Component and its core features.
 ### [Getting Started](getting-started.md)
 Step-by-step guide to set up and configure the component for basic email communication.
 
+### [Upgrading to v2](UPGRADE-v2.md)
+**Important:** Breaking changes from v1 to v2, including configuration changes and database migration steps.
+
 ### [Configuration Reference](configuration.md)
 Comprehensive reference for all configuration options, environment variables, and settings.
 

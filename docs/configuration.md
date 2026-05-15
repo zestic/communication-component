@@ -74,6 +74,10 @@ This document provides a comprehensive reference for all configuration options a
 | `DB_PORT` | Database port | `5432` | No |
 | `POSTGRES_SCHEMA` | PostgreSQL schema name | `communication_component` | No |
 
+**Notes:**
+- `DB_PORT` default is `5432` for PostgreSQL, `3306` for MySQL. Set explicitly if different.
+- `POSTGRES_SCHEMA` is ignored for MySQL. MySQL uses the default schema (database).
+- `DB_USER` for MySQL is typically `root` for development; use a dedicated user for production.
 ## Communication Configuration
 
 ### Basic Structure
@@ -254,7 +258,35 @@ The email channel requires a transport configuration:
 
 ## Database Configuration
 
-### Repository Aliases
+### Definition Repository Configuration
+
+**v2.x: Automatic Driver Detection (Recommended)**
+
+In v2, the definition repository is automatically resolved based on your database driver. No manual configuration needed:
+
+```php
+'dependencies' => [
+    'factories' => [
+        CommunicationDefinitionRepositoryInterface::class => 
+            CommunicationDefinitionRepositoryFactory::class,
+    ],
+]
+```
+
+The factory automatically detects your database driver and uses:
+- **PostgreSQL** (`pgsql`, `pdo_pgsql`) → `PostgresCommunicationDefinitionRepository`
+- **MySQL** (`mysql`, `pdo_mysql`) → `MySqlCommunicationDefinitionRepository`
+
+### Legacy Configuration (v1 - Deprecated)
+
+Do not use this in v2. If you see this in your codebase, update to automatic driver detection:
+
+```php
+// ❌ DEPRECATED - Use factories + CommunicationDefinitionRepositoryFactory instead
+'aliases' => [
+    CommunicationDefinitionRepositoryInterface::class => PostgresCommunicationDefinitionRepository::class,
+],
+```
 
 ```php
 'aliases' => [
@@ -287,6 +319,35 @@ return [
 ];
 ```
 
+#### PostgreSQL Configuration
+
+```php
+'development' => [
+    'adapter' => 'pgsql',
+    'host' => getenv('DB_HOST') ?: 'localhost',
+    'name' => getenv('DB_NAME') ?: 'communication_development',
+    'user' => getenv('DB_USER') ?: 'postgres',
+    'pass' => getenv('DB_PASSWORD') ?: 'postgres',
+    'port' => (int) (getenv('DB_PORT') ?: 5432),
+    'charset' => 'utf8',
+    'schema' => getenv('POSTGRES_SCHEMA') ?: 'communication_component',
+],
+```
+
+#### MySQL Configuration
+
+```php
+'development' => [
+    'adapter' => 'mysql',
+    'host' => getenv('DB_HOST') ?: 'localhost',
+    'name' => getenv('DB_NAME') ?: 'communication_development',
+    'user' => getenv('DB_USER') ?: 'root',
+    'pass' => getenv('DB_PASSWORD') ?: '',
+    'port' => (int) (getenv('DB_PORT') ?: 3306),
+    'charset' => 'utf8mb4',
+],
+```
+
 ## Complete Configuration Example
 
 ### .env File
@@ -315,6 +376,61 @@ DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_PORT=5432
 POSTGRES_SCHEMA=communication_component
+```
+
+#### PostgreSQL .env Example
+
+```bash
+# Communication settings
+COMMUNICATION_FROM_EMAIL=noreply@yourcompany.com
+COMMUNICATION_FROM_NAME="Your Company"
+
+# Email transport (SMTP example)
+COMMUNICATION_TRANSPORT_EMAIL_TYPE=smtp
+COMMUNICATION_TRANSPORT_EMAIL_URI=smtp.mailgun.org
+COMMUNICATION_TRANSPORT_EMAIL_PORT=587
+COMMUNICATION_TRANSPORT_EMAIL_USERNAME=postmaster@mg.yourcompany.com
+COMMUNICATION_TRANSPORT_EMAIL_PASSWORD=your-mailgun-password
+COMMUNICATION_TRANSPORT_EMAIL_ENCRYPTION=tls
+COMMUNICATION_TRANSPORT_EMAIL_AUTH_MODE=login
+
+# Messenger transport
+COMMUNICATION_MESSENGER_TRANSPORT_DSN=redis://localhost:6379/messages
+
+# PostgreSQL Database
+DB_HOST=localhost
+DB_NAME=your_app_production
+DB_USER=postgres
+DB_PASSWORD=your_db_password
+DB_PORT=5432
+POSTGRES_SCHEMA=communication_component
+```
+
+#### MySQL .env Example
+
+```bash
+# Communication settings
+COMMUNICATION_FROM_EMAIL=noreply@yourcompany.com
+COMMUNICATION_FROM_NAME="Your Company"
+
+# Email transport (SMTP example)
+COMMUNICATION_TRANSPORT_EMAIL_TYPE=smtp
+COMMUNICATION_TRANSPORT_EMAIL_URI=smtp.mailgun.org
+COMMUNICATION_TRANSPORT_EMAIL_PORT=587
+COMMUNICATION_TRANSPORT_EMAIL_USERNAME=postmaster@mg.yourcompany.com
+COMMUNICATION_TRANSPORT_EMAIL_PASSWORD=your-mailgun-password
+COMMUNICATION_TRANSPORT_EMAIL_ENCRYPTION=tls
+COMMUNICATION_TRANSPORT_EMAIL_AUTH_MODE=login
+
+# Messenger transport
+COMMUNICATION_MESSENGER_TRANSPORT_DSN=redis://localhost:6379/messages
+
+# MySQL Database
+DB_HOST=localhost
+DB_NAME=your_app_production
+DB_USER=mysql_user
+DB_PASSWORD=your_db_password
+DB_PORT=3306
 ```
 
 ### communication.global.php

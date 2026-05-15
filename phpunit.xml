@@ -39,5 +39,12 @@
     <env name="POSTGRES_TEST_PASSWORD" value="postgres"/>
     <env name="POSTGRES_TEST_PORT" value="5432"/>
     <env name="POSTGRES_TEST_SCHEMA" value="communication_component"/>
+
+    <!-- MySQL test configuration for integration tests -->
+    <env name="MYSQL_TEST_HOST" value="localhost"/>
+    <env name="MYSQL_TEST_DB" value="communication_component_test"/>
+    <env name="MYSQL_TEST_USER" value="root"/>
+    <env name="MYSQL_TEST_PASSWORD" value="root"/>
+    <env name="MYSQL_TEST_PORT" value="3306"/>
   </php>
 </phpunit>

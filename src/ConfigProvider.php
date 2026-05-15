@@ -17,7 +17,7 @@ use Communication\Application\Factory\Transport\CommunicationTransportFactory;
 use Communication\Command\SendTestEmailCommand;
 use Communication\Context\EmailContext;
 use Communication\Definition\Repository\CommunicationDefinitionRepositoryInterface;
-use Communication\Definition\Repository\PostgresCommunicationDefinitionRepository;
+use Communication\Definition\Repository\Factory\CommunicationDefinitionRepositoryFactory;
 use Communication\Entity\CommunicationSettings;
 use Communication\Factory\Context\ChannelContextFactory;
 use Communication\Factory\Legacy\CommunicationFactory as LegacyCommunicationFactory;
@@ -71,10 +71,10 @@ class ConfigProvider
                 LegacyCommunicationFactory::class,
             ],
             'aliases' => [
-                CommunicationDefinitionRepositoryInterface::class => PostgresCommunicationDefinitionRepository::class,
                 TemplateRepositoryInterface::class => PdoTemplateRepository::class,
             ],
             'factories' => [
+                CommunicationDefinitionRepositoryInterface::class => CommunicationDefinitionRepositoryFactory::class,
                 // bus config
                 'communication.bus.email' => new MessageBusStaticFactory(
                     'communication.bus.email'
