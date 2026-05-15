@@ -20,7 +20,7 @@ class MySqlCommunicationDefinitionRepositoryTest extends IntegrationTestCase
     protected function setUp(): void
     {
         // Get database connection parameters from environment variables
-        $host = getenv('MYSQL_TEST_HOST') ?: 'localhost';
+        $host = getenv('MYSQL_TEST_HOST') ?: '127.0.0.1';
         $port = getenv('MYSQL_TEST_PORT') ?: '3306';
         $dbname = getenv('MYSQL_TEST_DB') ?: 'communication_component_test';
         $user = getenv('MYSQL_TEST_USER') ?: 'root';
