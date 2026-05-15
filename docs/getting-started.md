@@ -6,6 +6,10 @@
 
 The simplest setup is to have an email sent to an SMTP channel. Follow these steps to get started:
 
+> [!WARNING]
+> Communication Component v2 requires `communication.channelContexts` in configuration.
+> The legacy key `communication.context` is no longer supported and is rejected at runtime.
+
 ### 1. Configure the Component
 
 Add the following to `config\config.php`:
@@ -28,9 +32,20 @@ return [
         'routes' => [
             'email' => 'channel'
         ],
+        'channel' => [
+            'email' => [
+                'factory' => \Communication\Factory\Notification\EmailNotificationFactory::class,
+                'transport' => 'communication.channel.transport.email',
+            ],
+        ],
+        'channelContexts' => [
+            'email' => \Communication\Context\EmailContext::class,
+        ],
     ],
 ];
 ```
+
+`communication.channelContexts` is required in v2. The legacy key `communication.context` is rejected.
 
 If you don't set the `from` address globally, you can also set it on a communication level.
 
