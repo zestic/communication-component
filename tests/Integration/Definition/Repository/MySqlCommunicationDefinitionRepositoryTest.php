@@ -75,7 +75,7 @@ class MySqlCommunicationDefinitionRepositoryTest extends IntegrationTestCase
                 template TEXT NOT NULL,
                 context_schema JSON NOT NULL,
                 subject_schema JSON NOT NULL,
-                channel_config JSON NOT NULL DEFAULT '{}',
+                channel_config JSON NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
                 FOREIGN KEY (communication_identifier) REFERENCES communication_definitions(identifier) ON DELETE CASCADE,
